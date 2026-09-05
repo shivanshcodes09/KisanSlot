@@ -1,0 +1,20 @@
+.payments-page { min-height: 100vh; background: #f4f7f6; padding: 20px; }
+.page-nav { max-width: 1100px; margin: 0 auto 30px; }
+.nav-back-btn { background: none; border: none; color: #1B4D2E; font-weight: 600; cursor: pointer; font-size: 16px; }
+.payments-container { max-width: 1100px; margin: 0 auto; }
+.payment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.page-title { color: #1B4D2E; font-size: 32px; font-weight: 800; margin: 0; }
+.earnings-summary { background: linear-gradient(135deg, #1B4D2E, #2D7A3E); color: white; padding: 20px 30px; border-radius: 20px; text-align: center; }
+.earnings-summary span { font-size: 16px; opacity: 0.9; margin-right: 10px; }
+.earnings-summary .total-amount { font-size: 32px; font-weight: 900; color: #F4D03F; }
+.payments-table-wrapper { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 20px; }
+.payments-table { width: 100%; border-collapse: collapse; text-align: left; }
+.table-head { background: #f8f9fa; color: #666; font-weight: 600; font-size: 14px; }
+.table-head th { padding: 15px; border-bottom: 2px solid #eee; }
+.payments-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; font-size: 15px; color: #333; }
+.amt-cell { font-weight: 800; color: #2D7A3E; font-size: 16px; }
+.payment-status { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.payment-status.paid { background: #dcfce7; color: #166534; }
+.payment-status.pending { background: #fef9c3; color: #854d0e; }
+.btn-download { padding: 6px 12px; background: #f0f7f0; border: 1px solid #2D7A3E; color: #2D7A3E; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.3s; }
+.btn-download:hover { background: #2D7A3E; color: white; }

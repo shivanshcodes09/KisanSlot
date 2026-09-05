@@ -1,0 +1,41 @@
+:root {
+  --primary-green: #1B4D2E;    /* Deep Forest Green from logo */
+  --accent-gold: #F4D03F;      /* Harvest Gold from logo */
+  --light-green: #2D7A3E;     /* Mid Green */
+  --soft-white: #F9FBF9;       /* Off-white for backgrounds */
+  --text-dark: #1A2F1C;       /* Almost black-green */
+  --text-muted: #666;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* This creates a very subtle, expensive-looking agricultural gradient */
+  background: linear-gradient(135deg, #fdfdfd 0%, #f2f8f2 50%, #eef5ee 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* Add this to make your containers "pop" against the background */
+.container, .auth-card, .dashboard-card, .profile-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px); /* This gives a modern "glass" effect */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 15px 35px rgba(27, 77, 46, 0.1); /* Subtle green shadow */
+}
+
+/* Standard Button Styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(27, 77, 46, 0.3);
+}

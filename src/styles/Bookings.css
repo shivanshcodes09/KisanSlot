@@ -1,0 +1,125 @@
+:root {
+  --primary-green: #1B4D2E;
+  --accent-gold: #F4D03F;
+  --soft-cream: #FDFBF7;
+  --text-dark: #2C3E50;
+  --text-muted: #7F8C8D;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.bookings-page {
+  min-height: 100vh;
+  background: var(--soft-cream);
+}
+
+.bookings-central-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.page-title {
+  color: var(--primary-green);
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 60px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 60px;
+}
+
+.tab-btn {
+  padding: 12px 25px;
+  border-radius: 15px;
+  border: 2px solid #eee;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
+}
+
+.tab-btn.active {
+  background: var(--primary-green);
+  color: white;
+  border-color: var(--primary-green);
+  box-shadow: 0 5px 15px rgba(27, 77, 46, 0.2);
+}
+
+.bookings-table-wrapper {
+  width: 100%;
+  background: white;
+  border-radius: 25px;
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid #eee;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.bookings-table th {
+  padding: 18px;
+  background: #f8f9fa;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 2px solid #eee;
+}
+
+.bookings-table td {
+  padding: 18px;
+  border-bottom: 1px solid #f4f7f6;
+  color: var(--text-dark);
+  font-size: 15px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.upcoming { background: #fff4e5; color: #b7791f; }
+.status-badge.completed { background: #e6f4ea; color: #1B4D2E; }
+
+.btn-details {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid var(--primary-green);
+  color: var(--primary-green);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-details:hover {
+  background: var(--primary-green);
+  color: white;
+}
