@@ -38,7 +38,7 @@ const translations = {
 };
 
 export default function Signup({ onSuccess }) {
-  const navigate = useNavigate();
+  
   const { language } = useLanguage();
   const t = translations[language] || translations.en;
   
