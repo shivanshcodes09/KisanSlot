@@ -168,7 +168,7 @@ export default function Signup({ onSuccess }) {
         </div>
 
         <p className="auth-footer">
-          {t.already} <a onClick={() => navigate('/login')} className="signup-link">{t.login}</a>
+          {t.already} <a href="/login" className="signup-link">{t.login}</a>
         </p>
       </div>
     </div>
