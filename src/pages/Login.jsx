@@ -31,7 +31,6 @@ const translations = {
 };
 
 export default function Login({ onSuccess }) {
-  const navigate = useNavigate();
   const { language } = useLanguage();
   const t = translations[language] || translations.en;
   
