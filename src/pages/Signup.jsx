@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useLanguage } from '../context/LanguageContext';
 import confetti from 'canvas-confetti';
 import '../styles/Auth.css';
