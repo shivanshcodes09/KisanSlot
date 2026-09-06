@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIH 2026 Idea Submission - KisanSlot | Team Synapse</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Outfit and Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Three.js for 3D Interactive Simulations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            background-color: #0b1120;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #0f172a;
+            overflow-x: hidden;
+            padding: 24px 12px 60px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* 16:9 Standard Slide Dimensions */
+        .slide-page {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 36px;
+            border: 2px solid #e2e8f0;
+        }
+
+        @media (max-width: 900px) {
+            .slide-page {
+                aspect-ratio: auto;
+                min-height: 640px;
+            }
+        }
+
+        /* Official SIH Header Band */
+        .sih-header-band {
+            padding: 10px 24px;
+            background: linear-gradient(90deg, #f8fafc 0%, #ffffff 50%, #f0fdf4 100%);
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        .sih-tag {
+            background: #047857;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        .sih-sub-meta {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Slide Content Area */
+        .slide-body {
+            padding: 16px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(circle at 90% 10%, rgba(240, 253, 244, 0.8) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        /* Official Template Footer */
+        .sih-footer-band {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 8px 24px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 2px solid #1e293b;
+            z-index: 10;
+        }
+
+        .team-pill {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid #334155;
+        }
+
+        /* 3D Simulation Box */
+        .three-box-hero {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: radial-gradient(circle at center, #064e3b 0%, #022c22 100%);
+            border-radius: 12px;
+            border: 1.5px solid #10b981;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.25);
+            cursor: grab;
+        }
+
+        .three-box-hero:active {
+            cursor: grabbing;
+        }
+
+        .three-box-gate {
+            position: relative;
+            width: 100%;
+            height: 175px;
+            background: linear-gradient(135deg, #091a28 0%, #030f18 100%);
+            border-radius: 12px;
+            border: 1.5px solid #0284c7;
+            overflow: hidden;
+            cursor: grab;
+            box-shadow: inset 0 0 20px rgba(2, 132, 199, 0.3);
+        }
+
+        .three-box-gate:active {
+            cursor: grabbing;
+        }
+
+        .hud-overlay {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .hud-label {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            color: #38bdf8;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hud-live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            border: 1px solid #10b981;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hud-live::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 6px #10b981;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .proto-actions {
+            position: absolute;
+            bottom: 8px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .interactive-btn {
+            background: #0284c7;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        .interactive-btn:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        /* Modern Visual Card Utility */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.09);
+        }
+
+        /* Floating Nav toolbar for presentation mode */
+        .presentation-bar {
+            position: fixed;
+            bottom: 16px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid #334155;
+            padding: 6px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .nav-btn {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: #0284c7;
+            border-color: #38bdf8;
+        }
+
+        .nav-counter {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Presentation Mode Floating Toolbar -->
+    <div class="presentation-bar">
+        <span class="text-emerald-400 font-bold text-xs flex items-center gap-1.5 font-heading">
+            <i class="fa-solid fa-seedling"></i> KisanSlot SIH 2026
+        </span>
+        <div class="h-4 w-px bg-slate-700"></div>
+        <button class="nav-btn" onclick="scrollToSlide(1)"><i class="fa-solid fa-backward-step"></i> Start</button>
+        <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+        <span class="nav-counter" id="activeSlideCounter">Slide 1 / 6</span>
+        <button class="nav-btn" onclick="nextSlide()">Next <i class="fa-solid fa-chevron-right"></i></button>
+        <button class="nav-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Export PDF</button>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 1: COVER / PROBLEM STATEMENT DETAILS
+         ========================================================================= -->
+    <div class="slide-page" id="slide-1">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-3">
+                <span class="sih-tag"><i class="fa-solid fa-award"></i> SIH 2026 SUBMISSION</span>
+                <span class="sih-sub-meta">Ministry of Consumer Affairs, Food &amp; Public Distribution</span>
+            </div>
+            <!-- Header Brand Emblem -->
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-300">
+                    <i class="fa-solid fa-hashtag text-emerald-600"></i> SIH26032
+                </span>
+            </div>
+        </div>
+
+        <div class="slide-body grid grid-cols-12 gap-6 items-center">
+            <!-- Left 7 Cols: Official Details & Title -->
+            <div class="col-span-12 md:col-span-7 flex flex-col justify-center space-y-3.5">
+                <div class="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full w-max text-emerald-800 text-xs font-bold">
+                    <i class="fa-solid fa-bullhorn text-emerald-600"></i> Internal Hackathon Selection Round
+                </div>
+
+                <h1 class="text-2xl lg:text-3xl font-extrabold text-slate-900 font-heading leading-tight">
+                    KisanSlot: Smart Mandi Appointment &amp; Queue Management
+                </h1>
+
+                <p class="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-2.5 rounded-lg border-l-4 border-emerald-600">
+                    <strong>Problem Statement Title:</strong> Farmers often face long waiting times, lack of information regarding procurement schedules, and uncertainty about procurement status.
+                </p>
+
+                <!-- Grid Details Box -->
+                <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 block text-[10.5px] font-bold uppercase">Problem Statement ID</span>
+                        <span class="text-slate-900 font-extrabold text-sm font-heading text-emerald-700">SIH26032</span>
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 block text-[10.5px] font-bold uppercase">Category</span>
+                        <span class="text-slate-900 font-extrabold text-sm font-heading text-blue-600">Software</span>
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 block text-[10.5px] font-bold uppercase">Team Name</span>
+                        <span class="text-slate-900 font-extrabold text-sm font-heading text-slate-800">Synapse</span>
+                    </div>
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 block text-[10.5px] font-bold uppercase">Team Structure</span>
+                        <span class="text-slate-900 font-extrabold text-sm font-heading text-emerald-700">6 Members</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 5 Cols: Brand Logo + Interactive 3D Hologram -->
+            <div class="col-span-12 md:col-span-5 flex flex-col items-center justify-center space-y-2.5">
+                <!-- KisanSlot Logo Image with graceful SVG fallback -->
+                <div class="bg-white p-2.5 rounded-xl border border-emerald-200 shadow-md flex items-center justify-center w-full max-w-[210px]">
+                    <img src="12.png" alt="KisanSlot Logo" class="h-20 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/240x90/064e3b/ffffff?text=KisanSlot';">
+                </div>
+
+                <!-- 3D Interactive Token Container -->
+                <div class="three-box-hero" id="token3dBox">
+                    <canvas id="token3dCanvas" class="w-full h-full block"></canvas>
+                    <div class="hud-overlay">
+                        <span class="hud-label"><i class="fa-solid fa-cube text-emerald-400"></i> 3D E-Token Model</span>
+                        <span class="hud-live">Interactive</span>
+                    </div>
+                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] text-emerald-300 font-bold bg-slate-900/80 px-2.5 py-0.5 rounded-full pointer-events-none whitespace-nowrap">
+                        <i class="fa-solid fa-arrows-spin"></i> Click &amp; Drag to Rotate Hologram
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-2 text-[10.5px] font-bold text-slate-600">
+                    <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded"><i class="fa-solid fa-check"></i> Zero Coding Stack</span>
+                    <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded"><i class="fa-solid fa-phone"></i> IVR &amp; WhatsApp Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 1 of 6</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 2: PROPOSED SOLUTION (Idea / Solution / Prototype)
+         ========================================================================= -->
+    <div class="slide-page" id="slide-2">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-2">
+                <span class="sih-tag">@SIH Idea submission- Template</span>
+                <span class="text-sm font-bold text-slate-800 font-heading">PROPOSED SOLUTION</span>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">KisanSlot Platform Architecture</span>
+        </div>
+
+        <div class="slide-body flex flex-col justify-between">
+            <div class="mb-2">
+                <h2 class="text-xl font-extrabold text-slate-900 font-heading flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-emerald-600 rounded-sm inline-block"></span>
+                    Describe your Idea / Solution / Prototype
+                </h2>
+                <p class="text-xs text-slate-600">
+                    An inclusive, multi-channel appointment scheduler transforming chaotic physical queues into a transparent, time-stamped digital token stream.
+                </p>
+            </div>
+
+            <!-- 3 Core Sections matching template requirements -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 my-auto">
+                <!-- 1. Detailed Explanation -->
+                <div class="glass-card border-t-4 border-t-emerald-600">
+                    <div class="flex items-center gap-2 mb-2 text-emerald-800">
+                        <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xs text-slate-800 uppercase tracking-wide">
+                            1. Detailed Explanation
+                        </h3>
+                    </div>
+                    <ul class="text-[11.5px] text-slate-600 space-y-1.5 leading-relaxed">
+                        <li><strong>Multi-Channel Booking:</strong> Farmers reserve slots via smartphone web app, WhatsApp chatbot, or zero-data toll-free IVR call.</li>
+                        <li><strong>Capacity Throttling:</strong> Mandis configure daily quintal thresholds, dynamically distributing tractor arrivals across hourly windows.</li>
+                        <li><strong>Digital Gate Pass:</strong> Issues a tamper-proof QR code &amp; 6-digit alphanumeric SMS token containing crop, tare weight &amp; bay info.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. How it addresses problem -->
+                <div class="glass-card border-t-4 border-t-blue-600">
+                    <div class="flex items-center gap-2 mb-2 text-blue-800">
+                        <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xs text-slate-800 uppercase tracking-wide">
+                            2. How It Solves The Crisis
+                        </h3>
+                    </div>
+                    <ul class="text-[11.5px] text-slate-600 space-y-1.5 leading-relaxed">
+                        <li><strong>Wait Time Slashed 80%:</strong> Shifts 48–72 hr highway tractor gridlocks into guaranteed 45-minute gate-in weighbridge slots.</li>
+                        <li><strong>Zero Information Asymmetry:</strong> Automated broadcast alerts update farmers on moisture acceptance, MSP rates, and schedule adjustments.</li>
+                        <li><strong>Transparent Direct Benefit:</strong> Live tracking from bag unbagging &amp; quality check to Aadhaar DBT bank credit verification.</li>
+                    </ul>
+                </div>
+
+                <!-- 3. Innovation and Uniqueness -->
+                <div class="glass-card border-t-4 border-t-amber-500">
+                    <div class="flex items-center gap-2 mb-2 text-amber-800">
+                        <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xs text-slate-800 uppercase tracking-wide">
+                            3. Innovation &amp; Uniqueness
+                        </h3>
+                    </div>
+                    <ul class="text-[11.5px] text-slate-600 space-y-1.5 leading-relaxed">
+                        <li><strong>"No-App" Feature Phone Access:</strong> Missed call / IVR auto-books slots without requiring internet or smartphones.</li>
+                        <li><strong>Dynamic Buffer Algorithm:</strong> Automatically recalculates bay throughput when rain delays unbagging or conveyor operations.</li>
+                        <li><strong>Anti-Hoarding Token Audit:</strong> Integrates farmer land registry numbers to prevent middlemen from hoarding harvest slots.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Visual Flow Bar -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center justify-between text-xs font-bold text-slate-700">
+                <span class="flex items-center gap-1.5 text-emerald-700"><i class="fa-solid fa-id-card"></i> 1. Registration</span>
+                <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                <span class="flex items-center gap-1.5 text-blue-700"><i class="fa-solid fa-calendar-check"></i> 2. Slot Selection</span>
+                <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                <span class="flex items-center gap-1.5 text-amber-700"><i class="fa-solid fa-qrcode"></i> 3. E-Token Pass</span>
+                <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                <span class="flex items-center gap-1.5 text-purple-700"><i class="fa-solid fa-truck-ramp-box"></i> 4. Fast Bay Entry</span>
+                <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                <span class="flex items-center gap-1.5 text-teal-700"><i class="fa-solid fa-receipt"></i> 5. Instant DBT MSP</span>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 2 of 6</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 3: TECHNICAL APPROACH (Technologies & 3D Interactive Prototype)
+         ========================================================================= -->
+    <div class="slide-page" id="slide-3">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-2">
+                <span class="sih-tag">@SIH Idea submission- Template</span>
+                <span class="text-sm font-bold text-slate-800 font-heading">TECHNICAL APPROACH</span>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">Tech Stack &amp; 3D Working Prototype</span>
+        </div>
+
+        <div class="slide-body grid grid-cols-12 gap-4">
+            <!-- Left 6 Cols: Technologies to be used (Beginner / Low Code) -->
+            <div class="col-span-12 md:col-span-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-extrabold text-slate-900 font-heading flex items-center gap-2 mb-1.5">
+                        <span class="w-2.5 h-5 bg-blue-600 rounded-sm inline-block"></span>
+                        Technologies to be Used
+                    </h2>
+                    <p class="text-[11px] text-slate-500 mb-2">
+                        Designed for rapid, reliable execution by our 6-member team utilizing industry-proven low-code tools:
+                    </p>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5 shadow-sm">
+                            <div class="w-8 h-8 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                <i class="fa-solid fa-mobile-screen"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs">Frontend &amp; Citizen UI</h4>
+                                <p class="text-[10.5px] text-slate-600">FlutterFlow / React Web App for rapid responsive design, bilingual voice assistance, and offline caching.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5 shadow-sm">
+                            <div class="w-8 h-8 rounded bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs">Backend &amp; Real-time Database</h4>
+                                <p class="text-[10.5px] text-slate-600">Firebase Firestore + Cloud Functions for instant queue counter sync, token validation, and zero server management.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200 flex items-start gap-2.5 shadow-sm">
+                            <div class="w-8 h-8 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                <i class="fa-solid fa-tower-broadcast"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs">IVR &amp; Telecom Gateways</h4>
+                                <p class="text-[10.5px] text-slate-600">Twilio / Exotel telephony API + Gupshup WhatsApp Enterprise webhook for toll-free voice booking and vernacular SMS alerts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 Member Team Work Division -->
+                <div class="bg-slate-100 p-2 rounded-lg border border-slate-200 text-[10.5px]">
+                    <span class="font-bold text-slate-700 block mb-1">
+                        <i class="fa-solid fa-users text-blue-600"></i> Team Synapse (6-Member Role Division):
+                    </span>
+                    <div class="grid grid-cols-3 gap-1 text-[9.5px]">
+                        <span class="bg-white p-1 rounded border text-slate-700 font-semibold">M1 &amp; M2: UI/UX &amp; 3D Flow</span>
+                        <span class="bg-white p-1 rounded border text-slate-700 font-semibold">M3 &amp; M4: Firebase &amp; API Logic</span>
+                        <span class="bg-white p-1 rounded border text-slate-700 font-semibold">M5 &amp; M6: IVR, SMS &amp; Testing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 6 Cols: Methodology & 3D Interactive Gate Simulation -->
+            <div class="col-span-12 md:col-span-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-extrabold text-slate-900 font-heading flex items-center gap-2 mb-1.5">
+                        <span class="w-2.5 h-5 bg-emerald-600 rounded-sm inline-block"></span>
+                        Methodology &amp; 3D Gate Prototype
+                    </h2>
+                    <p class="text-[11px] text-slate-500 mb-2">
+                        Interactive 3D digital-twin prototype demonstrating smart gate scanning &amp; weighbridge movement:
+                    </p>
+
+                    <!-- 3D Gate Canvas Container -->
+                    <div class="three-box-gate" id="gate3dBox">
+                        <canvas id="gate3dCanvas" class="w-full h-full block"></canvas>
+                        
+                        <div class="hud-overlay">
+                            <span class="hud-label"><i class="fa-solid fa-barcode text-cyan-400"></i> APMC GATE #02 TWIN</span>
+                            <span class="hud-live" id="gateStatusText">SLOT VERIFIED • TROLLEY #04</span>
+                        </div>
+
+                        <div class="proto-actions">
+                            <button class="interactive-btn" id="simScanBtn" type="button">
+                                <i class="fa-solid fa-qrcode"></i> Scan Token
+                            </button>
+                            <button class="interactive-btn bg-slate-700 hover:bg-slate-600" id="simResetCamBtn" type="button">
+                                <i class="fa-solid fa-arrows-rotate"></i> Reset
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-1 left-2 text-[9px] text-slate-400 pointer-events-none">
+                            <i class="fa-solid fa-mouse"></i> Drag to change camera angle
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-lg text-xs mt-2 flex items-center gap-2.5">
+                    <i class="fa-solid fa-circle-check text-blue-600 text-lg"></i>
+                    <p class="text-[10.5px] text-blue-950 leading-tight">
+                        <strong>Hackathon Execution Strategy:</strong> We utilize ready-to-deploy low-code building blocks, guaranteeing an end-to-end working MVP within the hackathon timeframe.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 3 of 6</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 4: FEASIBILITY AND VIABILITY
+         ========================================================================= -->
+    <div class="slide-page" id="slide-4">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-2">
+                <span class="sih-tag">@SIH Idea submission- Template</span>
+                <span class="text-sm font-bold text-slate-800 font-heading">FEASIBILITY AND VIABILITY</span>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">Practical Ground Implementation</span>
+        </div>
+
+        <div class="slide-body flex flex-col justify-between">
+            <div class="mb-1">
+                <h2 class="text-xl font-extrabold text-slate-900 font-heading flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-purple-600 rounded-sm inline-block"></span>
+                    Operational Feasibility &amp; Risk Mitigation
+                </h2>
+                <p class="text-xs text-slate-600">
+                    Comprehensive evaluation ensuring practical rollout across rural APMC mandis and procurement centers.
+                </p>
+            </div>
+
+            <!-- 3 Columns: Feasibility Analysis -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 my-1">
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                    <div class="flex items-center gap-2 font-heading font-extrabold text-xs text-emerald-900 mb-1.5 uppercase">
+                        <i class="fa-solid fa-gears text-emerald-600"></i> Technical Feasibility
+                    </div>
+                    <p class="text-[11px] text-emerald-950 leading-relaxed">
+                        Lightweight web tech works on 2G/3G connections. Offline-first local storage ensures gatekeeper can scan tokens even during temporary internet disconnections.
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl">
+                    <div class="flex items-center gap-2 font-heading font-extrabold text-xs text-blue-900 mb-1.5 uppercase">
+                        <i class="fa-solid fa-coins text-blue-600"></i> Economic Viability
+                    </div>
+                    <p class="text-[11px] text-blue-950 leading-relaxed">
+                        Extremely low cloud footprint (free tier Firebase during pilot). Prevents ₹1,200/day tractor idling &amp; diesel waste, delivering high ROI for farming communities.
+                    </p>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                    <div class="flex items-center gap-2 font-heading font-extrabold text-xs text-amber-900 mb-1.5 uppercase">
+                        <i class="fa-solid fa-handshake-angle text-amber-600"></i> Social Acceptability
+                    </div>
+                    <p class="text-[11px] text-amber-950 leading-relaxed">
+                        Integrates with existing Gram Panchayat CSCs (Common Service Centres) and Krishi Vigyan Kendras to assist non-smartphone and elderly farmers.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Risk and Mitigation Matrix Table -->
+            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm mt-1">
+                <div class="bg-slate-100 px-3 py-1.5 border-b border-slate-200 font-bold text-xs text-slate-700 flex items-center justify-between">
+                    <span><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> Potential Challenges &amp; Strategic Mitigation</span>
+                    <span class="text-[10px] text-slate-500 font-normal">SIH Template Evaluation Matrix</span>
+                </div>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 border-b border-slate-200 text-[10.5px]">
+                            <th class="p-2 font-bold w-1/4">Key Challenge / Risk</th>
+                            <th class="p-2 font-bold w-1/4">Impact on Operations</th>
+                            <th class="p-2 font-bold w-1/2">Mitigation &amp; Overcoming Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-[11px] text-slate-700">
+                        <tr>
+                            <td class="p-2 font-bold text-red-600">Digital Illiteracy in Remote Areas</td>
+                            <td class="p-2">Farmers unable to navigate complex smartphone portals.</td>
+                            <td class="p-2 font-medium">Toll-free IVR voice call with Hindi/regional prompts + assisted booking at village CSC centers.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 font-bold text-amber-600">No-Show / Ghost Bookings</td>
+                            <td class="p-2">Unutilized capacity slots causing mandi underperformance.</td>
+                            <td class="p-2 font-medium">Auto-release timeout (30-min window) allocating empty slots to standby farmers queued nearby.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 font-bold text-blue-600">Unseasonal Rain &amp; Moisture Surges</td>
+                            <td class="p-2">Procurement halted, causing secondary queues.</td>
+                            <td class="p-2 font-medium">Dynamic Mandi Admin override triggers immediate mass SMS rescheduling to hold crops safely at farm.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 4 of 6</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 5: IMPACT AND BENEFITS
+         ========================================================================= -->
+    <div class="slide-page" id="slide-5">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-2">
+                <span class="sih-tag">@SIH Idea submission- Template</span>
+                <span class="text-sm font-bold text-slate-800 font-heading">IMPACT AND BENEFITS</span>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">Quantified Value Proposition</span>
+        </div>
+
+        <div class="slide-body flex flex-col justify-between">
+            <div class="mb-1">
+                <h2 class="text-xl font-extrabold text-slate-900 font-heading flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-emerald-600 rounded-sm inline-block"></span>
+                    Measurable Impact on Target Beneficiaries
+                </h2>
+                <p class="text-xs text-slate-600">
+                    Transforming India's agricultural supply chain for over 140 million farmers and APMC mandi operators nationwide.
+                </p>
+            </div>
+
+            <!-- Key Metric Counters -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-1">
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-700 p-3 rounded-xl text-white shadow-md">
+                    <span class="text-[10px] uppercase font-bold text-emerald-100 block">Queue Delay</span>
+                    <span class="text-2xl font-black font-heading leading-tight">-80%</span>
+                    <p class="text-[10px] text-emerald-100 mt-0.5">From 48 hrs to under 45 mins at gate entry.</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-600 to-cyan-700 p-3 rounded-xl text-white shadow-md">
+                    <span class="text-[10px] uppercase font-bold text-blue-100 block">Farmer Savings</span>
+                    <span class="text-2xl font-black font-heading leading-tight">₹2,400+</span>
+                    <p class="text-[10px] text-blue-100 mt-0.5">Saved in tractor rental and fuel wastage per trip.</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-3 rounded-xl text-white shadow-md">
+                    <span class="text-[10px] uppercase font-bold text-amber-100 block">Post-Harvest Loss</span>
+                    <span class="text-2xl font-black font-heading leading-tight">Zero Spill</span>
+                    <p class="text-[10px] text-amber-100 mt-0.5">Eliminates crop spoilage from open roadside rains.</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-600 to-indigo-700 p-3 rounded-xl text-white shadow-md">
+                    <span class="text-[10px] uppercase font-bold text-purple-100 block">DBT Visibility</span>
+                    <span class="text-2xl font-black font-heading leading-tight">100%</span>
+                    <p class="text-[10px] text-purple-100 mt-0.5">Real-time payment milestone tracker via SMS.</p>
+                </div>
+            </div>
+
+            <!-- Triple Bottom Line Benefits -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="glass-card">
+                    <div class="flex items-center gap-2 text-emerald-700 mb-1 font-bold text-xs">
+                        <i class="fa-solid fa-users text-sm"></i> Social Benefits
+                    </div>
+                    <ul class="text-[11px] text-slate-600 space-y-1">
+                        <li>• Restores dignity to farmers by ending agonizing days sleeping on highway tractor trolleys.</li>
+                        <li>• Eradicates arbitrary queue jumps and VIP favoritism via transparent digital timestamping.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card">
+                    <div class="flex items-center gap-2 text-blue-700 mb-1 font-bold text-xs">
+                        <i class="fa-solid fa-chart-line text-sm"></i> Economic Benefits
+                    </div>
+                    <ul class="text-[11px] text-slate-600 space-y-1">
+                        <li>• Fast weight slip generation accelerates FCI / NAFED procurement clearances.</li>
+                        <li>• Prevents distressed emergency sales to exploitative private village middlemen.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card">
+                    <div class="flex items-center gap-2 text-teal-700 mb-1 font-bold text-xs">
+                        <i class="fa-solid fa-leaf text-sm"></i> Environmental Benefits
+                    </div>
+                    <ul class="text-[11px] text-slate-600 space-y-1">
+                        <li>• Substantially reduces idling tractor diesel emissions outside mandi gate boundaries.</li>
+                        <li>• 100% paperless digital token pass saves thousands of printed receipt books per season.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 5 of 6</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SLIDE 6: RESEARCH AND REFERENCES
+         ========================================================================= -->
+    <div class="slide-page" id="slide-6">
+        <div class="sih-header-band">
+            <div class="flex items-center gap-2">
+                <span class="sih-tag">@SIH Idea submission- Template</span>
+                <span class="text-sm font-bold text-slate-800 font-heading">RESEARCH AND REFERENCES</span>
+            </div>
+            <span class="text-xs text-slate-500 font-bold">Academic &amp; Policy Foundations</span>
+        </div>
+
+        <div class="slide-body flex flex-col justify-between">
+            <div class="mb-1">
+                <h2 class="text-xl font-extrabold text-slate-900 font-heading flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-slate-800 rounded-sm inline-block"></span>
+                    Details / Links of Reference &amp; Research Work
+                </h2>
+                <p class="text-xs text-slate-600">
+                    Grounded in official Ministry guidelines, empirical mandi studies, and national digital infrastructure standards.
+                </p>
+            </div>
+
+            <!-- 4 Citations & Reference Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 my-auto">
+                <div class="glass-card border-l-4 border-l-emerald-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10.5px] font-bold text-emerald-700 uppercase">Government Benchmark</span>
+                        <span class="text-[10px] text-slate-400">Policy Framework</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 mb-1">Ministry of Consumer Affairs, Food &amp; Public Distribution</h4>
+                    <p class="text-[11px] text-slate-600 mb-1">
+                        Directives on Modernization of Foodgrain Procurement Operations and Mandatory Real-Time Weighment Automation (FCI Guidelines 2023-24).
+                    </p>
+                    <span class="text-[10.5px] text-emerald-800 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-link text-[10px]"></i> dfpd.gov.in/procurement-guidelines
+                    </span>
+                </div>
+
+                <div class="glass-card border-l-4 border-l-blue-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10.5px] font-bold text-blue-700 uppercase">Empirical Field Study</span>
+                        <span class="text-[10px] text-slate-400">ICAR &amp; NITI Aayog</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 mb-1">Evaluation of Agricultural Marketing Infrastructure (APMC Mandis)</h4>
+                    <p class="text-[11px] text-slate-600 mb-1">
+                        Documented average tractor waiting periods of 38 to 64 hours during peak Kharif paddy arrivals, identifying slot booking as primary remedy.
+                    </p>
+                    <span class="text-[10.5px] text-blue-800 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-link text-[10px]"></i> niti.gov.in/agriculture-mandi-reform
+                    </span>
+                </div>
+
+                <div class="glass-card border-l-4 border-l-amber-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10.5px] font-bold text-amber-700 uppercase">Proven Case Study</span>
+                        <span class="text-[10px] text-slate-400">State Rollout Analysis</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 mb-1">Haryana "Meri Fasal Mera Byora" &amp; e-Kharid Platform Analysis</h4>
+                    <p class="text-[11px] text-slate-600 mb-1">
+                        Benchmarking slot-issuance mechanisms, gatepass validation, and integration with Direct Benefit Transfer (DBT) to commercial banks.
+                    </p>
+                    <span class="text-[10.5px] text-amber-800 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-link text-[10px]"></i> ekharid.haryana.gov.in
+                    </span>
+                </div>
+
+                <div class="glass-card border-l-4 border-l-purple-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10.5px] font-bold text-purple-700 uppercase">National Integration</span>
+                        <span class="text-[10px] text-slate-400">Ministry of Agriculture</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 mb-1">e-NAM (National Agriculture Market) API Standards</h4>
+                    <p class="text-[11px] text-slate-600 mb-1">
+                        Open API standards for electronic gate entry, e-weighment slip generation, and Agristack farmer registry interoperability.
+                    </p>
+                    <span class="text-[10.5px] text-purple-800 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-link text-[10px]"></i> enam.gov.in/apmc-integration
+                    </span>
+                </div>
+            </div>
+
+            <!-- Pitch Conclusion Ribbon -->
+            <div class="bg-gradient-to-r from-slate-900 to-emerald-950 text-white p-2.5 rounded-lg flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-extrabold text-xs">
+                        <i class="fa-solid fa-thumbs-up"></i>
+                    </span>
+                    <span class="font-bold">Team Synapse is 100% prepared for Internal Hackathon prototype demonstration.</span>
+                </div>
+                <span class="text-emerald-400 font-mono text-[11px] font-bold">KisanSlot: Your Slot. Your Crop. Your Time.</span>
+            </div>
+        </div>
+
+        <div class="sih-footer-band">
+            <span>Smart India Hackathon 2026 | Idea Submission Template</span>
+            <span class="team-pill">Team: Synapse | PS ID: SIH26032</span>
+            <span class="font-bold">Slide 6 of 6</span>
+        </div>
+    </div>
+
+<script>
+// Presentation Navigation Helpers
+var currentSlideIndex = 1;
+var totalSlides = 6;
+
+function updateSlideIndicator(idx) {
+    currentSlideIndex = Math.max(1, Math.min(totalSlides, idx));
+    var indicator = document.getElementById('activeSlideCounter');
+    if (indicator) {
+        indicator.innerText = 'Slide ' + currentSlideIndex + ' / ' + totalSlides;
+    }
+}
+
+function scrollToSlide(slideNum) {
+    var target = document.getElementById('slide-' + slideNum);
+    if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        updateSlideIndicator(slideNum);
+    }
+}
+
+function nextSlide() {
+    if (currentSlideIndex < totalSlides) {
+        scrollToSlide(currentSlideIndex + 1);
+    }
+}
+
+function prevSlide() {
+    if (currentSlideIndex > 1) {
+        scrollToSlide(currentSlideIndex - 1);
+    }
+}
+
+// Keyboard arrow key navigation support
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+    }
+});
+
+// Update counter on scroll
+window.addEventListener('scroll', function() {
+    for (var i = 1; i <= totalSlides; i++) {
+        var el = document.getElementById('slide-' + i);
+        if (el) {
+            var rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.4) {
+                updateSlideIndicator(i);
+                break;
+            }
+        }
+    }
+});
+
+// -----------------------------------------------------------------------------
+// THREE.JS SIMULATIONS INITIALIZATION ON WINDOW LOAD
+// -----------------------------------------------------------------------------
+window.onload = function () {
+    // -------------------------------------------------------------------------
+    // 1. 3D E-TOKEN HOLOGRAM (SLIDE 1)
+    // -------------------------------------------------------------------------
+    (function initTokenHologram() {
+        var container = document.getElementById('token3dBox');
+        var canvas = document.getElementById('token3dCanvas');
+        if (!container || !canvas || typeof THREE === 'undefined') return;
+
+        var width = container.clientWidth || 360;
+        var height = container.clientHeight || 160;
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+        camera.position.z = 5.2;
+
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        var tokenGroup = new THREE.Group();
+        scene.add(tokenGroup);
+
+        // Core Golden-Emerald Token Coin
+        var coinGeo = new THREE.CylinderGeometry(1.5, 1.5, 0.22, 32);
+        var coinMat = new THREE.MeshStandardMaterial({
+            color: 0x059669,
+            metalness: 0.85,
+            roughness: 0.25,
+            emissive: 0x064e3b,
+            emissiveIntensity: 0.45
+        });
+        var coinMesh = new THREE.Mesh(coinGeo, coinMat);
+        coinMesh.rotation.x = Math.PI / 2;
+        tokenGroup.add(coinMesh);
+
+        // Outer Gold Ring Bezel
+        var ringGeo = new THREE.TorusGeometry(1.55, 0.08, 16, 64);
+        var ringMat = new THREE.MeshStandardMaterial({
+            color: 0xf59e0b,
+            metalness: 0.9,
+            roughness: 0.2
+        });
+        var ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        tokenGroup.add(ringMesh);
+
+        // Center Digital Clock / Grain Emblem Icon
+        var centerDiscGeo = new THREE.CylinderGeometry(0.85, 0.85, 0.26, 24);
+        var centerDiscMat = new THREE.MeshStandardMaterial({
+            color: 0x10b981,
+            metalness: 0.6,
+            roughness: 0.3,
+            emissive: 0x34d399,
+            emissiveIntensity: 0.35
+        });
+        var centerDisc = new THREE.Mesh(centerDiscGeo, centerDiscMat);
+        centerDisc.rotation.x = Math.PI / 2;
+        tokenGroup.add(centerDisc);
+
+        // Needles for Clock Face
+        var needleGeo = new THREE.BoxGeometry(0.1, 0.6, 0.3);
+        var needleMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        var needleMesh = new THREE.Mesh(needleGeo, needleMat);
+        needleMesh.position.set(0, 0.24, 0.05);
+        tokenGroup.add(needleMesh);
+
+        var minuteNeedleGeo = new THREE.BoxGeometry(0.45, 0.08, 0.3);
+        var minuteNeedleMesh = new THREE.Mesh(minuteNeedleGeo, needleMat);
+        minuteNeedleMesh.position.set(0.18, 0, 0.05);
+        tokenGroup.add(minuteNeedleMesh);
+
+        // Holographic Orbital Rings
+        var orbitGeo1 = new THREE.TorusGeometry(2.1, 0.02, 12, 64);
+        var orbitMat1 = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.65 });
+        var orbit1 = new THREE.Mesh(orbitGeo1, orbitMat1);
+        orbit1.rotation.x = 1.2;
+        scene.add(orbit1);
+
+        var orbitGeo2 = new THREE.TorusGeometry(2.35, 0.018, 12, 64);
+        var orbitMat2 = new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.45 });
+        var orbit2 = new THREE.Mesh(orbitGeo2, orbitMat2);
+        orbit2.rotation.y = 1.3;
+        scene.add(orbit2);
+
+        // Floating Particles
+        var particlesCount = 28;
+        var particleGeo = new THREE.BufferGeometry();
+        var posArray = new Float32Array(particlesCount * 3);
+        for (var i = 0; i < particlesCount * 3; i += 3) {
+            posArray[i] = (Math.random() - 0.5) * 5.5;
+            posArray[i + 1] = (Math.random() - 0.5) * 3;
+            posArray[i + 2] = (Math.random() - 0.5) * 3.5;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        var particleMat = new THREE.PointsMaterial({
+            size: 0.07,
+            color: 0x6ee7b7,
+            transparent: true,
+            opacity: 0.85
+        });
+        var particleMesh = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleMesh);
+
+        // Lighting
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+        scene.add(ambientLight);
+
+        var pointLight1 = new THREE.PointLight(0x34d399, 2.4, 12);
+        pointLight1.position.set(2, 3, 3);
+        scene.add(pointLight1);
+
+        var pointLight2 = new THREE.PointLight(0xf59e0b, 1.8, 10);
+        pointLight2.position.set(-3, -2, 2);
+        scene.add(pointLight2);
+
+        // Mouse Drag Controls
+        var isDragging = false;
+        var previousMousePosition = { x: 0, y: 0 };
+
+        container.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        window.addEventListener('mouseup', function () {
+            isDragging = false;
+        });
+
+        container.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+            var deltaX = e.clientX - previousMousePosition.x;
+            var deltaY = e.clientY - previousMousePosition.y;
+
+            tokenGroup.rotation.y += deltaX * 0.015;
+            tokenGroup.rotation.x += deltaY * 0.015;
+
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        // Touch drag support
+        container.addEventListener('touchstart', function (e) {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        });
+
+        window.addEventListener('touchend', function () {
+            isDragging = false;
+        });
+
+        container.addEventListener('touchmove', function (e) {
+            if (!isDragging || e.touches.length !== 1) return;
+            var deltaX = e.touches[0].clientX - previousMousePosition.x;
+            var deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+            tokenGroup.rotation.y += deltaX * 0.015;
+            tokenGroup.rotation.x += deltaY * 0.015;
+
+            previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        });
+
+        // Resize handler
+        window.addEventListener('resize', function () {
+            if (!container) return;
+            var newW = container.clientWidth;
+            var newH = container.clientHeight;
+            camera.aspect = newW / newH;
+            camera.updateProjectionMatrix();
+            renderer.setSize(newW, newH);
+        });
+
+        function animateToken() {
+            requestAnimationFrame(animateToken);
+            if (!isDragging) {
+                tokenGroup.rotation.y += 0.018;
+                tokenGroup.rotation.x = Math.sin(Date.now() * 0.0012) * 0.18;
+            }
+            orbit1.rotation.z += 0.008;
+            orbit2.rotation.x += 0.006;
+            particleMesh.rotation.y += 0.002;
+            renderer.render(scene, camera);
+        }
+        animateToken();
+    })();
+
+    // -------------------------------------------------------------------------
+    // 2. 3D DIGITAL MANDI GATE & WEIGHBRIDGE PROTOTYPE (SLIDE 3)
+    // -------------------------------------------------------------------------
+    (function initGatePrototype() {
+        var container = document.getElementById('gate3dBox');
+        var canvas = document.getElementById('gate3dCanvas');
+        if (!container || !canvas || typeof THREE === 'undefined') return;
+
+        var width = container.clientWidth || 400;
+        var height = container.clientHeight || 175;
+
+        var scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x061320, 0.045);
+
+        var camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+        camera.position.set(0, 3.2, 7.2);
+        camera.lookAt(0, 0.5, 0);
+
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        var rootGroup = new THREE.Group();
+        scene.add(rootGroup);
+
+        // Ground Road Platform
+        var roadGeo = new THREE.PlaneGeometry(12, 16);
+        var roadMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+        var roadMesh = new THREE.Mesh(roadGeo, roadMat);
+        roadMesh.rotation.x = -Math.PI / 2;
+        rootGroup.add(roadMesh);
+
+        // Electronic Weighbridge Plate
+        var weighbridgeGeo = new THREE.BoxGeometry(3.6, 0.12, 4.8);
+        var weighbridgeMat = new THREE.MeshStandardMaterial({
+            color: 0x334155,
+            metalness: 0.8,
+            roughness: 0.3
+        });
+        var weighbridge = new THREE.Mesh(weighbridgeGeo, weighbridgeMat);
+        weighbridge.position.set(0, 0.06, 0);
+        rootGroup.add(weighbridge);
+
+        // Road divider dashes
+        for (var i = -5; i <= 5; i += 2) {
+            var dashGeo = new THREE.PlaneGeometry(0.12, 0.9);
+            var dashMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+            var dash = new THREE.Mesh(dashGeo, dashMat);
+            dash.rotation.x = -Math.PI / 2;
+            dash.position.set(-1.9, 0.08, i);
+            rootGroup.add(dash);
+        }
+
+        // Smart Gate Arch Pillars
+        var pillarGeo = new THREE.BoxGeometry(0.35, 3.2, 0.35);
+        var pillarMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.6 });
+
+        var leftPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        leftPillar.position.set(-1.8, 1.6, 0);
+        rootGroup.add(leftPillar);
+
+        var rightPillar = new THREE.Mesh(pillarGeo, pillarMat);
+        rightPillar.position.set(1.8, 1.6, 0);
+        rootGroup.add(rightPillar);
+
+        // Top Arch Crossbar
+        var archGeo = new THREE.BoxGeometry(4.0, 0.4, 0.5);
+        var archMat = new THREE.MeshStandardMaterial({ color: 0x0369a1, metalness: 0.8 });
+        var archMesh = new THREE.Mesh(archGeo, archMat);
+        archMesh.position.set(0, 3.2, 0);
+        rootGroup.add(archMesh);
+
+        // Digital Display Screen on Arch
+        var screenGeo = new THREE.PlaneGeometry(2.4, 0.3);
+        var screenMat = new THREE.MeshBasicMaterial({ color: 0x10b981 });
+        var screen = new THREE.Mesh(screenGeo, screenMat);
+        screen.position.set(0, 3.2, 0.26);
+        rootGroup.add(screen);
+
+        // Laser Scanner Beam (Holographic Green)
+        var laserGeo = new THREE.CylinderGeometry(0.04, 1.6, 3, 16, 1, true);
+        var laserMat = new THREE.MeshBasicMaterial({
+            color: 0x34d399,
+            transparent: true,
+            opacity: 0.28,
+            side: THREE.DoubleSide
+        });
+        var laserBeam = new THREE.Mesh(laserGeo, laserMat);
+        laserBeam.position.set(0, 1.5, 0);
+        rootGroup.add(laserBeam);
+
+        // Low-Poly Tractor / Trolley Assembly
+        var vehicle = new THREE.Group();
+        rootGroup.add(vehicle);
+
+        // Tractor Engine Body
+        var bodyGeo = new THREE.BoxGeometry(1.2, 0.8, 1.6);
+        var bodyMat = new THREE.MeshStandardMaterial({ color: 0x16a34a });
+        var tractorBody = new THREE.Mesh(bodyGeo, bodyMat);
+        tractorBody.position.set(0, 0.65, -0.6);
+        vehicle.add(tractorBody);
+
+        // Tractor Cabin
+        var cabinGeo = new THREE.BoxGeometry(1.1, 0.75, 0.9);
+        var cabinMat = new THREE.MeshStandardMaterial({ color: 0x0f172a });
+        var cabin = new THREE.Mesh(cabinGeo, cabinMat);
+        cabin.position.set(0, 1.3, -0.9);
+        vehicle.add(cabin);
+
+        // Grain Trolley Attached
+        var trolleyGeo = new THREE.BoxGeometry(1.5, 0.9, 2.0);
+        var trolleyMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.6 });
+        var trolley = new THREE.Mesh(trolleyGeo, trolleyMat);
+        trolley.position.set(0, 0.7, 1.5);
+        vehicle.add(trolley);
+
+        // Golden Harvest Grain Load
+        var grainGeo = new THREE.ConeGeometry(0.85, 0.6, 8);
+        var grainMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.9 });
+        var grain = new THREE.Mesh(grainGeo, grainMat);
+        grain.position.set(0, 1.25, 1.5);
+        vehicle.add(grain);
+
+        // Wheels
+        var wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.2, 16);
+        var wheelMat = new THREE.MeshStandardMaterial({ color: 0x020617 });
+        var wheelOffsets = [
+            [-0.7, 0.35, -0.3], [0.7, 0.35, -0.3],
+            [-0.7, 0.35, -1.1], [0.7, 0.35, -1.1],
+            [-0.85, 0.45, 1.1], [0.85, 0.45, 1.1],
+            [-0.85, 0.45, 2.1], [0.85, 0.45, 2.1]
+        ];
+        wheelOffsets.forEach(function (pos) {
+            var w = new THREE.Mesh(wheelGeo, wheelMat);
+            w.rotation.z = Math.PI / 2;
+            w.position.set(pos[0], pos[1], pos[2]);
+            vehicle.add(w);
+        });
+
+        // Ambient & Spot Lighting
+        var gateAmbient = new THREE.AmbientLight(0xffffff, 0.85);
+        scene.add(gateAmbient);
+
+        var gateLight = new THREE.PointLight(0x38bdf8, 2, 12);
+        gateLight.position.set(0, 4, 1);
+        scene.add(gateLight);
+
+        var laserLight = new THREE.PointLight(0x10b981, 2.5, 6);
+        laserLight.position.set(0, 2.5, 0);
+        scene.add(laserLight);
+
+        // Mouse Drag Camera Rotation
+        var isDragging = false;
+        var prevX = 0;
+        var prevY = 0;
+
+        container.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            prevX = e.clientX;
+            prevY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', function () {
+            isDragging = false;
+        });
+
+        container.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+            var dx = e.clientX - prevX;
+            var dy = e.clientY - prevY;
+
+            rootGroup.rotation.y += dx * 0.012;
+            rootGroup.rotation.x = Math.max(-0.2, Math.min(0.6, rootGroup.rotation.x + dy * 0.008));
+
+            prevX = e.clientX;
+            prevY = e.clientY;
+        });
+
+        // Scan Simulation Interaction
+        var simBtn = document.getElementById('simScanBtn');
+        var statusText = document.getElementById('gateStatusText');
+        var resetBtn = document.getElementById('simResetCamBtn');
+
+        if (simBtn) {
+            simBtn.addEventListener('click', function () {
+                laserBeam.scale.set(1.4, 1, 1.4);
+                laserLight.intensity = 5;
+                if (statusText) {
+                    statusText.innerText = "TOKEN #KS-849 VALIDATED • 42.5 QNTL PADDY";
+                    statusText.style.color = "#4ade80";
+                }
+                setTimeout(function () {
+                    laserBeam.scale.set(1, 1, 1);
+                    laserLight.intensity = 2.5;
+                }, 800);
+            });
+        }
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function () {
+                rootGroup.rotation.set(0, 0, 0);
+                if (statusText) {
+                    statusText.innerText = "SLOT VERIFIED • TROLLEY #04";
+                    statusText.style.color = "#34d399";
+                }
+            });
+        }
+
+        // Window resize listener
+        window.addEventListener('resize', function () {
+            if (!container) return;
+            var newW = container.clientWidth;
+            var newH = container.clientHeight;
+            camera.aspect = newW / newH;
+            camera.updateProjectionMatrix();
+            renderer.setSize(newW, newH);
+        });
+
+        // Animation Loop for Vehicle Queue Simulation
+        var tractorZ = 3.5;
+        function animateGate() {
+            requestAnimationFrame(animateGate);
+
+            // Vehicle crawl simulating gate weighbridge passage
+            tractorZ -= 0.008;
+            if (tractorZ < -3.2) tractorZ = 4.2;
+            vehicle.position.z = tractorZ;
+
+            // Pulsing scanner beam effect
+            laserBeam.rotation.y += 0.02;
+            var beamOpacity = 0.2 + 0.15 * Math.sin(Date.now() * 0.005);
+            laserMat.opacity = beamOpacity;
+
+            renderer.render(scene, camera);
+        }
+        animateGate();
+    })();
+};
+</script>
+
+</body>
+</html>
