@@ -120,7 +120,7 @@ export default function Login({ onSuccess }) {
         </div>
 
         <p className="auth-footer">
-          {t.noAccount} <a onClick={() => navigate('/signup')} className="signup-link">{t.signup}</a>
+          {t.noAccount} <a href="/signup" className="signup-link">{t.signup}</a>
         </p>
       </div>
     </div>
