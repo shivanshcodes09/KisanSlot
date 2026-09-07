@@ -13,7 +13,6 @@ import Bookings from './pages/Bookings';
 import Payments from './pages/Payments';
 import MSP from './pages/MSP';
 import News from './pages/News';
-import LiveQueue from './pages/LiveQueue';
 import Operations from './pages/Operations';
 import LoadingScreen from './components/LoadingScreen';
 
@@ -47,7 +46,7 @@ export default function App() {
             <Route path="/bookings/:id" element={isLoggedIn ? <BookingDetail /> : <Navigate to="/login" />} />
             <Route path="/payments" element={isLoggedIn ? <Payments userData={userData} /> : <Navigate to="/login" />} />
             <Route path="/msp" element={isLoggedIn ? <MSP /> : <Navigate to="/login" />} />
-            <Route path="/queue" element={isLoggedIn ? <LiveQueue /> : <Navigate to="/login" />} />
+            <Route path="/queue" element={isLoggedIn ? <Operations /> : <Navigate to="/login" />} />
             <Route path="/operations" element={isLoggedIn ? <Operations /> : <Navigate to="/login" />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
