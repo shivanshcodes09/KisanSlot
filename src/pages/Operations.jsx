@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 const centerSeed = [
   { id: 1, name: 'Gurugram Procurement Centre', queue: 14, avg: 6, active: 2, total: 3, status: 'Operational' },
@@ -7,104 +8,74 @@ const centerSeed = [
   { id: 3, name: 'Sohna Procurement Centre', queue: 8, avg: 5, active: 1, total: 2, status: 'Operational' },
 ];
 
+const COPY = {
+  en: { title:'KisanSlot Live Operations', subtitle:'Real-time mandi visibility after slot booking', token:'YOUR LIVE TOKEN', serving:'Now serving', ahead:'Farmers ahead', wait:'Estimated wait', traffic:'Mandi traffic', arrival:'Smart arrival', health:'Centre health', journey:'Procurement Journey', operator:'Operator Demo', nearby:'Nearby Centre Load', dashboard:'Dashboard', next:'Call Next Farmer', breakdown:'Simulate Breakdown' },
+  hi: { title:'किसानस्लॉट लाइव संचालन', subtitle:'स्लॉट बुकिंग के बाद मंडी की रीयल-टाइम स्थिति', token:'आपका लाइव टोकन', serving:'अभी सेवा जारी', ahead:'आगे किसान', wait:'अनुमानित प्रतीक्षा', traffic:'मंडी भीड़', arrival:'स्मार्ट आगमन', health:'केंद्र स्थिति', journey:'खरीद यात्रा', operator:'ऑपरेटर डेमो', nearby:'नज़दीकी केंद्र भार', dashboard:'डैशबोर्ड', next:'अगला किसान बुलाएँ', breakdown:'ब्रेकडाउन दिखाएँ' },
+  ta: { title:'கிசான்ஸ்லாட் நேரடி செயல்பாடுகள்', subtitle:'ஸ்லாட் முன்பதிவுக்குப் பிறகு மண்டியின் நேரடி நிலை', token:'உங்கள் நேரடி டோக்கன்', serving:'இப்போது சேவை', ahead:'முன்னால் உள்ள விவசாயிகள்', wait:'மதிப்பிடப்பட்ட காத்திருப்பு', traffic:'மண்டி நெரிசல்', arrival:'ஸ்மார்ட் வருகை', health:'மைய நிலை', journey:'கொள்முதல் பயணம்', operator:'ஆபரேட்டர் டெமோ', nearby:'அருகிலுள்ள மைய சுமை', dashboard:'டாஷ்போர்டு', next:'அடுத்த விவசாயியை அழைக்கவும்', breakdown:'பழுதை சோதிக்கவும்' },
+  te: { title:'కిసాన్‌స్లాట్ లైవ్ ఆపరేషన్స్', subtitle:'స్లాట్ బుకింగ్ తర్వాత మార్కెట్ యొక్క రియల్-టైమ్ స్థితి', token:'మీ లైవ్ టోకెన్', serving:'ఇప్పుడు సేవలో', ahead:'ముందున్న రైతులు', wait:'అంచనా వేచి సమయం', traffic:'మార్కెట్ రద్దీ', arrival:'స్మార్ట్ రాక', health:'కేంద్ర స్థితి', journey:'కొనుగోలు ప్రయాణం', operator:'ఆపరేటర్ డెమో', nearby:'సమీప కేంద్ర లోడ్', dashboard:'డాష్‌బోర్డ్', next:'తదుపరి రైతును పిలవండి', breakdown:'బ్రేక్‌డౌన్ చూపించండి' },
+  bn: { title:'কিষানস্লট লাইভ অপারেশনস', subtitle:'স্লট বুকিংয়ের পর মান্ডির রিয়েল-টাইম অবস্থা', token:'আপনার লাইভ টোকেন', serving:'এখন পরিষেবা চলছে', ahead:'সামনে কৃষক', wait:'আনুমানিক অপেক্ষা', traffic:'মান্ডির ভিড়', arrival:'স্মার্ট আগমন', health:'কেন্দ্রের অবস্থা', journey:'ক্রয় যাত্রা', operator:'অপারেটর ডেমো', nearby:'নিকটবর্তী কেন্দ্রের চাপ', dashboard:'ড্যাশবোর্ড', next:'পরবর্তী কৃষককে ডাকুন', breakdown:'ব্রেকডাউন দেখান' },
+  mr: { title:'किसानस्लॉट लाइव्ह ऑपरेशन्स', subtitle:'स्लॉट बुकिंगनंतर मंडीची रिअल-टाइम स्थिती', token:'तुमचा लाइव्ह टोकन', serving:'सध्या सेवा', ahead:'पुढे शेतकरी', wait:'अंदाजे प्रतीक्षा', traffic:'मंडी गर्दी', arrival:'स्मार्ट आगमन', health:'केंद्र स्थिती', journey:'खरेदी प्रवास', operator:'ऑपरेटर डेमो', nearby:'जवळच्या केंद्राचा भार', dashboard:'डॅशबोर्ड', next:'पुढील शेतकऱ्याला बोलवा', breakdown:'ब्रेकडाउन दाखवा' },
+  gu: { title:'કિસાનસ્લોટ લાઇવ ઓપરેશન્સ', subtitle:'સ્લોટ બુકિંગ પછી મંડીની રિયલ-ટાઇમ સ્થિતિ', token:'તમારો લાઇવ ટોકન', serving:'હમણાં સેવા', ahead:'આગળના ખેડૂત', wait:'અંદાજિત રાહ', traffic:'મંડી ભીડ', arrival:'સ્માર્ટ આગમન', health:'કેન્દ્ર સ્થિતિ', journey:'ખરીદી યાત્રા', operator:'ઓપરેટર ડેમો', nearby:'નજીકના કેન્દ્રનો ભાર', dashboard:'ડેશબોર્ડ', next:'આગળના ખેડૂતને બોલાવો', breakdown:'બ્રેકડાઉન બતાવો' },
+  kn: { title:'ಕಿಸಾನ್‌ಸ್ಲಾಟ್ ಲೈವ್ ಕಾರ್ಯಾಚರಣೆ', subtitle:'ಸ್ಲಾಟ್ ಬುಕ್ಕಿಂಗ್ ನಂತರ ಮಾರುಕಟ್ಟೆಯ ನೈಜ-ಸಮಯ ಸ್ಥಿತಿ', token:'ನಿಮ್ಮ ಲೈವ್ ಟೋಕನ್', serving:'ಈಗ ಸೇವೆ', ahead:'ಮುಂದಿರುವ ರೈತರು', wait:'ಅಂದಾಜು ನಿರೀಕ್ಷೆ', traffic:'ಮಾರುಕಟ್ಟೆ ದಟ್ಟಣೆ', arrival:'ಸ್ಮಾರ್ಟ್ ಆಗಮನ', health:'ಕೇಂದ್ರ ಸ್ಥಿತಿ', journey:'ಖರೀದಿ ಪ್ರಯಾಣ', operator:'ಆಪರೇಟರ್ ಡೆಮೊ', nearby:'ಹತ್ತಿರದ ಕೇಂದ್ರದ ಲೋಡ್', dashboard:'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್', next:'ಮುಂದಿನ ರೈತನನ್ನು ಕರೆ', breakdown:'ಬ್ರೇಕ್‌ಡೌನ್ ತೋರಿಸಿ' },
+  ml: { title:'കിസാൻസ്ലോട്ട് ലൈവ് ഓപ്പറേഷൻസ്', subtitle:'സ്ലോട്ട് ബുക്കിംഗിന് ശേഷം മണ്ടിയുടെ തത്സമയ സ്ഥിതി', token:'നിങ്ങളുടെ ലൈവ് ടോക്കൺ', serving:'ഇപ്പോൾ സേവനം', ahead:'മുന്നിലുള്ള കർഷകർ', wait:'കാത്തിരിപ്പ് സമയം', traffic:'മണ്ടി തിരക്ക്', arrival:'സ്മാർട്ട് വരവ്', health:'കേന്ദ്ര സ്ഥിതി', journey:'വാങ്ങൽ യാത്ര', operator:'ഓപ്പറേറ്റർ ഡെമോ', nearby:'സമീപ കേന്ദ്ര ലോഡ്', dashboard:'ഡാഷ്ബോർഡ്', next:'അടുത്ത കർഷകനെ വിളിക്കുക', breakdown:'ബ്രേക്ക്‌ഡൗൺ കാണിക്കുക' },
+  pa: { title:'ਕਿਸਾਨਸਲੌਟ ਲਾਈਵ ਓਪਰੇਸ਼ਨ', subtitle:'ਸਲੌਟ ਬੁਕਿੰਗ ਤੋਂ ਬਾਅਦ ਮੰਡੀ ਦੀ ਰੀਅਲ-ਟਾਈਮ ਸਥਿਤੀ', token:'ਤੁਹਾਡਾ ਲਾਈਵ ਟੋਕਨ', serving:'ਹੁਣ ਸੇਵਾ', ahead:'ਅੱਗੇ ਕਿਸਾਨ', wait:'ਅਨੁਮਾਨਿਤ ਉਡੀਕ', traffic:'ਮੰਡੀ ਭੀੜ', arrival:'ਸਮਾਰਟ ਆਗਮਨ', health:'ਕੇਂਦਰ ਸਥਿਤੀ', journey:'ਖਰੀਦ ਯਾਤਰਾ', operator:'ਓਪਰੇਟਰ ਡੈਮੋ', nearby:'ਨੇੜਲੇ ਕੇਂਦਰ ਦਾ ਲੋਡ', dashboard:'ਡੈਸ਼ਬੋਰਡ', next:'ਅਗਲਾ ਕਿਸਾਨ ਬੁਲਾਓ', breakdown:'ਬ੍ਰੇਕਡਾਊਨ ਦਿਖਾਓ' },
+  or: { title:'କିସାନସ୍ଲଟ୍ ଲାଇଭ୍ ଅପରେସନ୍', subtitle:'ସ୍ଲଟ୍ ବୁକିଂ ପରେ ମଣ୍ଡିର ରିଅଲ୍-ଟାଇମ୍ ସ୍ଥିତି', token:'ଆପଣଙ୍କ ଲାଇଭ୍ ଟୋକେନ୍', serving:'ଏବେ ସେବା', ahead:'ଆଗରେ କୃଷକ', wait:'ଆନୁମାନିକ ପ୍ରତୀକ୍ଷା', traffic:'ମଣ୍ଡି ଭିଡ଼', arrival:'ସ୍ମାର୍ଟ ଆଗମନ', health:'କେନ୍ଦ୍ର ସ୍ଥିତି', journey:'କ୍ରୟ ଯାତ୍ରା', operator:'ଅପରେଟର ଡେମୋ', nearby:'ନିକଟ କେନ୍ଦ୍ର ଭାର', dashboard:'ଡ୍ୟାଶବୋର୍ଡ', next:'ପରବର୍ତ୍ତୀ କୃଷକଙ୍କୁ ଡାକନ୍ତୁ', breakdown:'ବ୍ରେକଡାଉନ୍ ଦେଖାନ୍ତୁ' },
+  as: { title:'কিষাণস্লট লাইভ অপাৰেচন', subtitle:'স্লট বুকিঙৰ পিছত বজাৰৰ বাস্তৱ-সময়ৰ অৱস্থা', token:'আপোনাৰ লাইভ টোকেন', serving:'এতিয়া সেৱা', ahead:'আগৰ কৃষক', wait:'আনুমানিক অপেক্ষা', traffic:'বজাৰৰ ভিৰ', arrival:'স্মাৰ্ট আগমন', health:'কেন্দ্ৰৰ অৱস্থা', journey:'ক্ৰয় যাত্ৰা', operator:'অপাৰেটৰ ডেমো', nearby:'ওচৰৰ কেন্দ্ৰৰ লোড', dashboard:'ডেশ্ববোর্ড', next:'পৰৱৰ্তী কৃষকক মাতক', breakdown:'ব্ৰেকডাউন দেখুৱাওক' },
+  ur: { title:'کسان سلاٹ لائیو آپریشنز', subtitle:'سلاٹ بکنگ کے بعد منڈی کی حقیقی وقت کی صورتحال', token:'آپ کا لائیو ٹوکن', serving:'اب خدمت جاری', ahead:'آگے کسان', wait:'متوقع انتظار', traffic:'منڈی رش', arrival:'اسمارٹ آمد', health:'مرکز کی حالت', journey:'خریداری کا سفر', operator:'آپریٹر ڈیمو', nearby:'قریبی مرکز کا بوجھ', dashboard:'ڈیش بورڈ', next:'اگلے کسان کو بلائیں', breakdown:'خرابی دکھائیں' },
+  sa: { title:'किसानस्लॉट् प्रत्यक्षसञ्चालनम्', subtitle:'स्लॉट् आरक्षणानन्तरं मण्ड्याः तत्क्षणस्थितिः', token:'भवतः प्रत्यक्षटोकनम्', serving:'अधुना सेवा', ahead:'अग्रे कृषकाः', wait:'अनुमानित प्रतीक्षा', traffic:'मण्डी भीडः', arrival:'स्मार्ट आगमनम्', health:'केन्द्रस्थितिः', journey:'क्रययात्रा', operator:'ऑपरेटर प्रदर्शनम्', nearby:'समीपकेन्द्रभारः', dashboard:'डैशबोर्ड', next:'अग्रिमकृषकं आह्वयतु', breakdown:'व्यवधानं दर्शयतु' },
+  ks: { title:'کِسان سلاٹ لایِو آپریشنز', subtitle:'سلاٹ بُکنگ پتہٕ منڈی ہُند رِیَل ٹایم حال', token:'تُہند لایِو ٹوکن', serving:'وَنۍ خدمت', ahead:'برونٹھ کسان', wait:'اندازٕ انتظار', traffic:'منڈی بھیٖڑ', arrival:'سمارٹ آمد', health:'مرکز حالت', journey:'خریداری سفر', operator:'آپریٹر ڈیمو', nearby:'نزدیک مرکز لوڈ', dashboard:'ڈیش بورڈ', next:'اگلا کسان بُلاؤ', breakdown:'خرابی دکھاؤ' },
+  sd: { title:'ڪسان سلاٽ لائيو آپريشنز', subtitle:'سلاٽ بڪنگ کان پوءِ منڊي جي حقيقي وقت واري حالت', token:'توهان جو لائيو ٽوڪن', serving:'هاڻي خدمت', ahead:'اڳيان هاري', wait:'اندازي انتظار', traffic:'منڊي رش', arrival:'سمارٽ آمد', health:'مرڪز حالت', journey:'خريداري سفر', operator:'آپريٽر ڊيمو', nearby:'ويجهي مرڪز جو لوڊ', dashboard:'ڊيش بورڊ', next:'اڳين هاري کي سڏيو', breakdown:'خرابي ڏيکاريو' },
+  kok: { title:'किसानस्लॉट लायव्ह ऑपरेशन्स', subtitle:'स्लॉट बुकिंग उपरांत मंडीची रिअल-टाइम स्थिती', token:'तुमचो लायव्ह टोकन', serving:'आतां सेवा', ahead:'मुखार शेतकार', wait:'अंदाजीत वाट', traffic:'मंडी गर्दी', arrival:'स्मार्ट आगमन', health:'केंद्र स्थिती', journey:'खरेदी प्रवास', operator:'ऑपरेटर डेमो', nearby:'लागींच्या केंद्राचो भार', dashboard:'डॅशबोर्ड', next:'फुडल्या शेतकाराक आपयात', breakdown:'ब्रेकडाऊन दाखयात' },
+  doi: { title:'किसानस्लॉट लाइव ऑपरेशन', subtitle:'स्लॉट बुकिंग दे बाद मंडी दी रियल-टाइम स्थिति', token:'तुंदा लाइव टोकन', serving:'हून सेवा', ahead:'अग्गें किसान', wait:'अंदाज़ी इंतज़ार', traffic:'मंडी भीड़', arrival:'स्मार्ट आगमन', health:'केंद्र स्थिति', journey:'खरीद यात्रा', operator:'ऑपरेटर डेमो', nearby:'नेड़े दे केंद्र दा भार', dashboard:'डैशबोर्ड', next:'अगले किसान गी सद्दो', breakdown:'ब्रेकडाउन दस्सो' },
+  mni: { title:'কিসানস্লট লাইভ অপারেশন', subtitle:'স্লট বুকিং মতুংদা মণ্ডিগী রিয়েল-টাইম ফিভম', token:'নহাক্কী লাইভ টোকেন', serving:'হৌজিক সার্ভিং', ahead:'মাংদা লৈবা লৌমী', wait:'খংদোকপা ঙাইরিবা মতম', traffic:'মণ্ডি ভিড়', arrival:'স্মার্ট লাকপা', health:'সেন্টর ফিভম', journey:'লেইবা যাত্রা', operator:'অপারেটর ডেমো', nearby:'মনাক নকপা সেন্টর লোড', dashboard:'ড্যাশবোর্ড', next:'মথংগী লৌমীবু কৌ', breakdown:'ব্রেকডাউন উৎলো' },
+  ne: { title:'किसानस्लट लाइभ अपरेसन', subtitle:'स्लट बुकिङपछि मण्डीको रियल-टाइम अवस्था', token:'तपाईंको लाइभ टोकन', serving:'अहिले सेवा', ahead:'अगाडि किसान', wait:'अनुमानित प्रतीक्षा', traffic:'मण्डी भीड', arrival:'स्मार्ट आगमन', health:'केन्द्र स्थिति', journey:'खरिद यात्रा', operator:'अपरेटर डेमो', nearby:'नजिकको केन्द्रको भार', dashboard:'ड्यासबोर्ड', next:'अर्को किसान बोलाउनुहोस्', breakdown:'ब्रेकडाउन देखाउनुहोस्' },
+};
+
 export default function Operations() {
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const t = COPY[language] || COPY.en;
   const [centers, setCenters] = useState(centerSeed);
   const [myToken] = useState(118);
   const [serving, setServing] = useState(111);
   const selected = centers[0];
-
   const farmersAhead = Math.max(myToken - serving - 1, 0);
   const eta = farmersAhead * selected.avg;
   const recommendedLeave = eta > 30 ? `Leave in about ${Math.max(eta - 20, 10)} min` : 'You can leave now';
+  const traffic = useMemo(() => eta <= 30 ? { label:'LOW LOAD', icon:'🟢' } : eta <= 60 ? { label:'MODERATE', icon:'🟡' } : { label:'HIGH LOAD', icon:'🔴' }, [eta]);
+  const advanceQueue = () => setServing(v => Math.min(v + 1, myToken));
+  const togglePause = () => setCenters(prev => prev.map((c, i) => i === 0 ? { ...c, status: c.status === 'Paused' ? 'Operational' : 'Paused' } : c));
+  const card = { background:'#fff', border:'1px solid #e8ece8', borderRadius:18, padding:22, boxShadow:'0 10px 25px rgba(27,77,46,.07)' };
+  const small = { fontSize:13, color:'#6b7b72', marginBottom:6 };
+  const value = { fontSize:28, fontWeight:800, color:'#1B4D2E' };
 
-  const traffic = useMemo(() => {
-    if (eta <= 30) return { label: 'LOW LOAD', icon: '🟢' };
-    if (eta <= 60) return { label: 'MODERATE', icon: '🟡' };
-    return { label: 'HIGH LOAD', icon: '🔴' };
-  }, [eta]);
-
-  const advanceQueue = () => setServing((v) => Math.min(v + 1, myToken));
-  const togglePause = () => {
-    setCenters((prev) => prev.map((c, i) => i === 0 ? { ...c, status: c.status === 'Paused' ? 'Operational' : 'Paused' } : c));
-  };
-
-  const card = { background: '#fff', border: '1px solid #e8ece8', borderRadius: 18, padding: 22, boxShadow: '0 10px 25px rgba(27,77,46,.07)' };
-  const small = { fontSize: 13, color: '#6b7b72', marginBottom: 6 };
-  const value = { fontSize: 28, fontWeight: 800, color: '#1B4D2E' };
-
-  return (
-    <div style={{ minHeight: '100vh', background: '#f7faf7', fontFamily: 'Segoe UI, sans-serif', color: '#24352c' }}>
-      <div style={{ background: '#1B4D2E', color: 'white', padding: '18px 5%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 15, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 24, fontWeight: 900 }}>KisanSlot Live Operations</div>
-          <div style={{ opacity: .8, fontSize: 13 }}>Real-time mandi visibility after slot booking</div>
-        </div>
-        <button onClick={() => navigate('/dashboard')} style={{ border: 0, borderRadius: 10, padding: '10px 16px', fontWeight: 700, cursor: 'pointer' }}>← Dashboard</button>
-      </div>
-
-      <main style={{ width: '90%', maxWidth: 1180, margin: '28px auto 60px' }}>
-        <section style={{ ...card, background: 'linear-gradient(135deg,#1B4D2E,#2D7A3E)', color: 'white', marginBottom: 22 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: 13, opacity: .8 }}>YOUR LIVE TOKEN</div>
-              <div style={{ fontSize: 48, fontWeight: 900 }}>KS-{myToken}</div>
-              <div style={{ marginTop: 8 }}>{selected.name}</div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(120px,1fr))', gap: 12 }}>
-              <div style={{ background: 'rgba(255,255,255,.12)', padding: 14, borderRadius: 12 }}><div style={{ fontSize: 12, opacity: .8 }}>Now serving</div><b style={{ fontSize: 24 }}>KS-{serving}</b></div>
-              <div style={{ background: 'rgba(255,255,255,.12)', padding: 14, borderRadius: 12 }}><div style={{ fontSize: 12, opacity: .8 }}>Farmers ahead</div><b style={{ fontSize: 24 }}>{farmersAhead}</b></div>
-              <div style={{ background: 'rgba(255,255,255,.12)', padding: 14, borderRadius: 12 }}><div style={{ fontSize: 12, opacity: .8 }}>Estimated wait</div><b style={{ fontSize: 24 }}>{eta} min</b></div>
-            </div>
-          </div>
-        </section>
-
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 16, marginBottom: 22 }}>
-          <div style={card}><div style={small}>Mandi traffic</div><div style={value}>{traffic.icon} {traffic.label}</div><div style={{ marginTop: 8, color: '#6b7b72' }}>Based on live queue and active counters.</div></div>
-          <div style={card}><div style={small}>Smart arrival</div><div style={{ ...value, fontSize: 22 }}>{recommendedLeave}</div><div style={{ marginTop: 8, color: '#6b7b72' }}>Avoid reaching too early when the centre is delayed.</div></div>
-          <div style={card}><div style={small}>Centre health</div><div style={{ ...value, fontSize: 22 }}>{selected.status === 'Paused' ? '⏸️ Paused' : '✅ Operational'}</div><div style={{ marginTop: 8, color: '#6b7b72' }}>{selected.active}/{selected.total} counters active</div></div>
-          <div style={card}><div style={small}>Queue model</div><div style={{ ...value, fontSize: 22 }}>{selected.avg} min/farmer</div><div style={{ marginTop: 8, color: '#6b7b72' }}>ETA recalculates as each token completes.</div></div>
-        </section>
-
-        <section style={{ display: 'grid', gridTemplateColumns: '1.3fr .7fr', gap: 18, marginBottom: 22 }}>
-          <div style={card}>
-            <h2 style={{ marginTop: 0, color: '#1B4D2E' }}>Procurement Journey</h2>
-            {['Slot Confirmed','Arrived at Centre','Live Queue','Quality Check','Weighing','Procurement Complete','Payment Initiated'].map((step, i) => (
-              <div key={step} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '11px 0', borderBottom: i < 6 ? '1px solid #edf0ed' : 'none' }}>
-                <div style={{ width: 28, height: 28, borderRadius: '50%', display: 'grid', placeItems: 'center', fontWeight: 800, background: i < 2 ? '#dff3e4' : i === 2 ? '#fff1c7' : '#eef1ee', color: '#1B4D2E' }}>{i < 2 ? '✓' : i + 1}</div>
-                <div style={{ fontWeight: i === 2 ? 800 : 600 }}>{step}</div>
-                {i === 2 && <span style={{ marginLeft: 'auto', color: '#b7791f', fontSize: 13 }}>In progress</span>}
-              </div>
-            ))}
-          </div>
-
-          <div style={card}>
-            <h2 style={{ marginTop: 0, color: '#1B4D2E' }}>Operator Demo</h2>
-            <p style={{ color: '#6b7b72', lineHeight: 1.5 }}>Use these controls to demonstrate a live queue changing in front of judges.</p>
-            <button onClick={advanceQueue} style={{ width: '100%', padding: 12, border: 0, borderRadius: 10, background: '#1B4D2E', color: 'white', fontWeight: 800, cursor: 'pointer', marginBottom: 10 }}>Call Next Farmer</button>
-            <button onClick={togglePause} style={{ width: '100%', padding: 12, borderRadius: 10, background: '#fff', border: '1px solid #d8ded9', fontWeight: 800, cursor: 'pointer' }}>{selected.status === 'Paused' ? 'Resume Centre' : 'Simulate Breakdown'}</button>
-            <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: selected.status === 'Paused' ? '#fff3e8' : '#f2f8f3', fontSize: 13 }}>
-              {selected.status === 'Paused' ? '⚠️ Queue paused. In production, affected farmers would receive an SMS/app delay alert.' : 'Live system healthy. ETA updates when the queue advances.'}
-            </div>
-          </div>
-        </section>
-
-        <section style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 15, flexWrap: 'wrap', alignItems: 'end' }}>
-            <div><h2 style={{ margin: 0, color: '#1B4D2E' }}>Nearby Centre Load</h2><p style={{ color: '#6b7b72' }}>KisanSlot can recommend a less-crowded eligible centre instead of forcing a fixed queue.</p></div>
-            <span style={{ fontSize: 12, background: '#eef6ef', color: '#1B4D2E', padding: '7px 10px', borderRadius: 20, fontWeight: 700 }}>Dynamic Load Balancing</span>
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 12 }}>
-              <thead><tr style={{ textAlign: 'left', color: '#6b7b72' }}><th style={{ padding: 10 }}>Centre</th><th>Queue</th><th>Est. wait</th><th>Status</th><th>Action</th></tr></thead>
-              <tbody>{centers.map((c) => {
-                const wait = Math.ceil((c.queue * c.avg) / Math.max(c.active,1));
-                return <tr key={c.id} style={{ borderTop: '1px solid #edf0ed' }}><td style={{ padding: 12, fontWeight: 700 }}>{c.name}</td><td>{c.queue}</td><td>{wait} min</td><td>{c.status}</td><td>{c.id === 3 ? <button style={{ border: 0, background: '#F4D03F', color: '#1B4D2E', padding: '7px 10px', borderRadius: 8, fontWeight: 800, cursor: 'pointer' }}>Suggest</button> : '—'}</td></tr>
-              })}</tbody>
-            </table>
-          </div>
-        </section>
-      </main>
+  return <div style={{ minHeight:'100vh', background:'#f7faf7', fontFamily:'Segoe UI, sans-serif', color:'#24352c' }}>
+    <div style={{ background:'#1B4D2E', color:'white', padding:'18px 5%', display:'flex', justifyContent:'space-between', alignItems:'center', gap:15, flexWrap:'wrap' }}>
+      <div><div style={{ fontSize:24, fontWeight:900 }}>{t.title}</div><div style={{ opacity:.8, fontSize:13 }}>{t.subtitle}</div></div>
+      <button onClick={() => navigate('/dashboard')} style={{ border:0, borderRadius:10, padding:'10px 16px', fontWeight:700, cursor:'pointer' }}>← {t.dashboard}</button>
     </div>
-  );
+    <main style={{ width:'90%', maxWidth:1180, margin:'28px auto 60px' }}>
+      <section style={{ ...card, background:'linear-gradient(135deg,#1B4D2E,#2D7A3E)', color:'white', marginBottom:22 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', gap:20, flexWrap:'wrap', alignItems:'center' }}>
+          <div><div style={{ fontSize:13, opacity:.8 }}>{t.token}</div><div style={{ fontSize:48, fontWeight:900 }}>KS-{myToken}</div><div style={{ marginTop:8 }}>{selected.name}</div></div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,minmax(120px,1fr))', gap:12 }}>
+            <div style={{ background:'rgba(255,255,255,.12)', padding:14, borderRadius:12 }}><div style={{ fontSize:12, opacity:.8 }}>{t.serving}</div><b style={{ fontSize:24 }}>KS-{serving}</b></div>
+            <div style={{ background:'rgba(255,255,255,.12)', padding:14, borderRadius:12 }}><div style={{ fontSize:12, opacity:.8 }}>{t.ahead}</div><b style={{ fontSize:24 }}>{farmersAhead}</b></div>
+            <div style={{ background:'rgba(255,255,255,.12)', padding:14, borderRadius:12 }}><div style={{ fontSize:12, opacity:.8 }}>{t.wait}</div><b style={{ fontSize:24 }}>{eta} min</b></div>
+          </div>
+        </div>
+      </section>
+      <section style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:16, marginBottom:22 }}>
+        <div style={card}><div style={small}>{t.traffic}</div><div style={value}>{traffic.icon} {traffic.label}</div><div style={{ marginTop:8, color:'#6b7b72' }}>Based on live queue and active counters.</div></div>
+        <div style={card}><div style={small}>{t.arrival}</div><div style={{ ...value, fontSize:22 }}>{recommendedLeave}</div><div style={{ marginTop:8, color:'#6b7b72' }}>Avoid reaching too early when the centre is delayed.</div></div>
+        <div style={card}><div style={small}>{t.health}</div><div style={{ ...value, fontSize:22 }}>{selected.status === 'Paused' ? '⏸️ Paused' : '✅ Operational'}</div><div style={{ marginTop:8, color:'#6b7b72' }}>{selected.active}/{selected.total} counters active</div></div>
+        <div style={card}><div style={small}>Queue model</div><div style={{ ...value, fontSize:22 }}>{selected.avg} min/farmer</div><div style={{ marginTop:8, color:'#6b7b72' }}>ETA recalculates as each token completes.</div></div>
+      </section>
+      <section style={{ display:'grid', gridTemplateColumns:'1.3fr .7fr', gap:18, marginBottom:22 }}>
+        <div style={card}><h2 style={{ marginTop:0, color:'#1B4D2E' }}>{t.journey}</h2>{['Slot Confirmed','Arrived at Centre','Live Queue','Quality Check','Weighing','Procurement Complete','Payment Initiated'].map((step,i)=><div key={step} style={{ display:'flex', gap:12, alignItems:'center', padding:'11px 0', borderBottom:i<6?'1px solid #edf0ed':'none' }}><div style={{ width:28,height:28,borderRadius:'50%',display:'grid',placeItems:'center',fontWeight:800,background:i<2?'#dff3e4':i===2?'#fff1c7':'#eef1ee',color:'#1B4D2E' }}>{i<2?'✓':i+1}</div><div style={{ fontWeight:i===2?800:600 }}>{step}</div>{i===2&&<span style={{ marginLeft:'auto',color:'#b7791f',fontSize:13 }}>In progress</span>}</div>)}</div>
+        <div style={card}><h2 style={{ marginTop:0, color:'#1B4D2E' }}>{t.operator}</h2><p style={{ color:'#6b7b72', lineHeight:1.5 }}>Use these controls to demonstrate a live queue changing in front of judges.</p><button onClick={advanceQueue} style={{ width:'100%',padding:12,border:0,borderRadius:10,background:'#1B4D2E',color:'white',fontWeight:800,cursor:'pointer',marginBottom:10 }}>{t.next}</button><button onClick={togglePause} style={{ width:'100%',padding:12,borderRadius:10,background:'#fff',border:'1px solid #d8ded9',fontWeight:800,cursor:'pointer' }}>{selected.status==='Paused'?'Resume Centre':t.breakdown}</button><div style={{ marginTop:16,padding:12,borderRadius:10,background:selected.status==='Paused'?'#fff3e8':'#f2f8f3',fontSize:13 }}>{selected.status==='Paused'?'⚠️ Queue paused. Farmers would receive a delay alert.':'Live system healthy. ETA updates when the queue advances.'}</div></div>
+      </section>
+      <section style={card}><div style={{ display:'flex',justifyContent:'space-between',gap:15,flexWrap:'wrap',alignItems:'end' }}><div><h2 style={{ margin:0,color:'#1B4D2E' }}>{t.nearby}</h2><p style={{ color:'#6b7b72' }}>KisanSlot can recommend a less-crowded eligible centre instead of forcing a fixed queue.</p></div><span style={{ fontSize:12,background:'#eef6ef',color:'#1B4D2E',padding:'7px 10px',borderRadius:20,fontWeight:700 }}>Dynamic Load Balancing</span></div><div style={{ overflowX:'auto' }}><table style={{ width:'100%',borderCollapse:'collapse',marginTop:12 }}><thead><tr style={{ textAlign:'left',color:'#6b7b72' }}><th style={{ padding:10 }}>Centre</th><th>Queue</th><th>Est. wait</th><th>Status</th><th>Action</th></tr></thead><tbody>{centers.map(c=>{const wait=Math.ceil((c.queue*c.avg)/Math.max(c.active,1));return <tr key={c.id} style={{ borderTop:'1px solid #edf0ed' }}><td style={{ padding:12,fontWeight:700 }}>{c.name}</td><td>{c.queue}</td><td>{wait} min</td><td>{c.status}</td><td>{c.id===3?<button style={{ border:0,background:'#F4D03F',color:'#1B4D2E',padding:'7px 10px',borderRadius:8,fontWeight:800,cursor:'pointer' }}>Suggest</button>:'—'}</td></tr>})}</tbody></table></div></section>
+    </main>
+  </div>;
 }
