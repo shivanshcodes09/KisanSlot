@@ -1,161 +1,88 @@
-import React, { useState } from 'react'; // FIXED: Added useState here
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import '../styles/LandingPage.css';
 
-const translations = {
-  en: {
-    signup: 'Join Now', login: 'Farmer Login', tagline: 'Restoring Dignity and Time to the Indian Farmer',
-    farmers: 'Farmers Empowered', hours: 'Hours Recovered', income: 'Income Boosted',
-    problemTitle: 'The Silent Struggle of our Farmers',
-    problemDesc: 'For decades, the procurement process has been a test of endurance. Farmers travel miles only to stand in chaotic queues for hours, losing wages and fuel. This inefficiency costs livelihoods.',
-    solutionTitle: 'The KisanSlot Revolution',
-    solutionDesc: 'We replace chaos with precision. By digitizing the queue, we ensure that the farmer is the priority, not the process.',
-    featureTitle: 'Engineered for the Grassroots',
-    feature1: '⚡ Instant Slot Booking', feature2: '📱 SMS & WhatsApp Alerts',
-    feature3: '💰 Zero-Middleman Transparency', feature4: '🌾 22+ Regional Languages',
-    feature5: '📉 Real-time Queue Tracking', feature6: '🏦 Integrated Payment Status',
-    aboutTitle: 'Our Vision',
-    aboutDesc: 'KisanSlot is more than a tool; it is a government-backed mission to ensure every grain of effort a farmer puts into the soil is rewarded with a dignified procurement experience.',
-    contactUs: 'Get in Touch', email: 'Email: support@kisanslot.gov.in', phone: 'Phone: +91-1234-567890',
-    changeLang: 'Language'
-  },
-  hi: {
-    signup: 'अभी जुड़ें', login: 'किसान लॉगिन', tagline: 'भारतीय किसानों को समय और सम्मान वापस देना',
-    farmers: 'सशक्त किसान', hours: 'बचाए गए घंटे', income: 'आय बढ़ी',
-    problemTitle: 'हमारे किसानों का मौन संघर्ष',
-    problemDesc: 'दशकों से, खरीद प्रक्रिया सहनशक्ति की परीक्षा रही है। किसान मील दूर से आते हैं और घंटों अराजक कतारों में खड़े रहते हैं।',
-    solutionTitle: 'किसानस्लॉट क्रांति',
-    solutionDesc: 'हम अराजकता को सटीकता से बदलते हैं। डिजिटल कतार के माध्यम से, हम सुनिश्चित करते हैं कि किसान प्राथमिकता हो।',
-    featureTitle: 'जमीनी स्तर के लिए निर्मित',
-    feature1: '⚡ तत्काल स्लॉट बुकिंग', feature2: '📱 SMS और व्हाट्सएप अलर्ट',
-    feature3: '💰 बिचौलिया-मुक्त पारदर्शिता', feature4: '🌾 22+ क्षेत्रीय भाषाओं में उपलब्ध',
-    feature5: '📉 रीयल-टाइम कतार ट्रैकिंग', feature6: '🏦 एकीकृत भुगतान स्थिति',
-    aboutTitle: 'हमारा दृष्टिकोण',
-    aboutDesc: 'KisanSlot एक सरकार समर्थित मिशन है ताकि यह सुनिश्चित हो सके कि किसान की मेहनत का फल सम्मान के साथ मिले।',
-    contactUs: 'हमसे संपर्क करें', email: 'ईमेल: support@kisanslot.gov.in', phone: 'फोन: +91-1234-567890',
-    changeLang: 'भाषा बदलें'
-  },
+const LANGS = [
+  ['en','English'],['hi','हिंदी'],['mr','मराठी'],['gu','ગુજરાતી'],['pa','ਪੰਜਾਬੀ'],['bn','বাংলা'],
+  ['ta','தமிழ்'],['te','తెలుగు'],['kn','ಕನ್ನಡ'],['ml','മലയാളം'],['or','ଓଡ଼ିଆ'],['as','অসমীয়া'],
+  ['ur','اردو'],['sa','संस्कृत'],['ks','کٲشُر'],['sd','سنڌي'],['kok','कोंकणी'],['doi','डोगरी'],['mni','মৈতৈলোন্'],['ne','नेपाली']
+];
+
+const T = {
+  en:{login:'Farmer Login',join:'Join Now',change:'Change Language',hero:'From scheduled procurement to predictable procurement',sub:'Book your slot, track the live queue, get delay alerts and reach the mandi when your turn is actually near.',explore:'Explore Live Operations',features:'What KisanSlot does',f:['Live Digital Token','Smart Arrival Time','Live Mandi Queue','Centre Health & Delays','Procurement Journey','Nearby Centre Suggestion'],d:['Know your token and how many farmers are ahead.','Get a recommended arrival time based on the live queue.','See current serving token and estimated waiting time.','Know if the centre is operational, crowded or temporarily paused.','Track from slot confirmed to weighing and payment initiation.','Compare eligible nearby centres and avoid overloaded queues.'],how:'One simple journey',steps:['Book slot','Track queue','Arrive on time','Complete procurement'],footer:'Built as a farmer-first procurement operations prototype.'},
+  hi:{login:'किसान लॉगिन',join:'अभी जुड़ें',change:'भाषा बदलें',hero:'निर्धारित खरीद से अनुमानित और भरोसेमंद खरीद तक',sub:'स्लॉट बुक करें, लाइव कतार देखें, देरी की सूचना पाएं और तभी मंडी पहुँचें जब आपकी बारी वास्तव में पास हो।',explore:'लाइव संचालन देखें',features:'KisanSlot क्या करता है',f:['लाइव डिजिटल टोकन','स्मार्ट आगमन समय','लाइव मंडी कतार','केंद्र स्थिति और देरी','खरीद यात्रा','नज़दीकी केंद्र सुझाव'],d:['अपना टोकन और आगे कितने किसान हैं देखें।','लाइव कतार के आधार पर सही पहुँच समय पाएं।','अभी कौन सा टोकन चल रहा है और प्रतीक्षा समय देखें।','केंद्र चालू, भीड़भाड़ वाला या रुका है—तुरंत जानें।','स्लॉट से तौल और भुगतान शुरू होने तक ट्रैक करें।','कम भीड़ वाले योग्य नज़दीकी केंद्र की तुलना करें।'],how:'एक सरल प्रक्रिया',steps:['स्लॉट बुक करें','कतार ट्रैक करें','समय पर पहुँचें','खरीद पूरी करें'],footer:'किसान-केंद्रित खरीद संचालन प्रोटोटाइप।'},
+  mr:{login:'शेतकरी लॉगिन',join:'आता सामील व्हा',change:'भाषा बदला',hero:'नियोजित खरेदीपासून अंदाजे आणि विश्वासार्ह खरेदीपर्यंत',sub:'स्लॉट बुक करा, लाइव्ह रांग पहा, विलंब सूचना मिळवा आणि तुमची पाळी जवळ आली कीच केंद्रात पोहोचा.',explore:'लाइव्ह ऑपरेशन्स पहा',features:'KisanSlot काय करते',f:['लाइव्ह डिजिटल टोकन','स्मार्ट आगमन वेळ','लाइव्ह मंडी रांग','केंद्र स्थिती व विलंब','खरेदी प्रवास','जवळच्या केंद्राचा सल्ला'],d:['तुमचा टोकन आणि पुढे किती शेतकरी आहेत ते पहा.','लाइव्ह रांगेनुसार योग्य पोहोच वेळ मिळवा.','सध्या कोणता टोकन चालू आहे आणि प्रतीक्षा वेळ पहा.','केंद्र चालू, गर्दीचे किंवा थांबलेले आहे का ते जाणून घ्या.','स्लॉटपासून वजन आणि पेमेंट सुरू होईपर्यंत ट्रॅक करा.','कमी गर्दीचे पात्र जवळचे केंद्र तुलना करा.'],how:'एक सोपी प्रक्रिया',steps:['स्लॉट बुक करा','रांग ट्रॅक करा','वेळेवर पोहोचा','खरेदी पूर्ण करा'],footer:'शेतकरी-केंद्रित खरेदी संचालन प्रोटोटाइप.'},
+  gu:{login:'ખેડૂત લૉગિન',join:'હમણાં જોડાઓ',change:'ભાષા બદલો',hero:'નક્કી કરેલી ખરીદીથી અનુમાનિત અને વિશ્વસનીય ખરીદી સુધી',sub:'સ્લોટ બુક કરો, લાઇવ કતાર જુઓ, વિલંબ સૂચનાઓ મેળવો અને તમારી વારી નજીક આવે ત્યારે જ કેન્દ્ર પહોંચો.',explore:'લાઇવ ઓપરેશન્સ જુઓ',features:'KisanSlot શું કરે છે',f:['લાઇવ ડિજિટલ ટોકન','સ્માર્ટ આગમન સમય','લાઇવ મંડી કતાર','કેન્દ્ર સ્થિતિ અને વિલંબ','ખરીદી યાત્રા','નજીકના કેન્દ્રનું સૂચન'],d:['તમારો ટોકન અને આગળ કેટલા ખેડૂત છે તે જુઓ.','લાઇવ કતાર મુજબ યોગ્ય પહોંચ સમય મેળવો.','હાલ કયો ટોકન ચાલી રહ્યો છે અને રાહ સમય જુઓ.','કેન્દ્ર ચાલુ, ભીડવાળું કે રોકાયેલું છે તે જાણો.','સ્લોટથી તોલ અને ચુકવણી શરૂ થાય ત્યાં સુધી ટ્રેક કરો.','ઓછી ભીડવાળા યોગ્ય નજીકના કેન્દ્રની તુલના કરો.'],how:'એક સરળ પ્રક્રિયા',steps:['સ્લોટ બુક કરો','કતાર ટ્રેક કરો','સમયસર પહોંચો','ખરીદી પૂર્ણ કરો'],footer:'ખેડૂત-પ્રથમ ખરીદી ઓપરેશન્સ પ્રોટોટાઇપ.'},
+  pa:{login:'ਕਿਸਾਨ ਲੌਗਇਨ',join:'ਹੁਣੇ ਜੁੜੋ',change:'ਭਾਸ਼ਾ ਬਦਲੋ',hero:'ਤੈਅ ਖਰੀਦ ਤੋਂ ਅਨੁਮਾਨਯੋਗ ਅਤੇ ਭਰੋਸੇਯੋਗ ਖਰੀਦ ਤੱਕ',sub:'ਸਲੌਟ ਬੁੱਕ ਕਰੋ, ਲਾਈਵ ਕਤਾਰ ਵੇਖੋ, ਦੇਰੀ ਦੀ ਸੂਚਨਾ ਲਵੋ ਅਤੇ ਆਪਣੀ ਵਾਰੀ ਨੇੜੇ ਹੋਣ ਤੇ ਹੀ ਕੇਂਦਰ ਪਹੁੰਚੋ।',explore:'ਲਾਈਵ ਓਪਰੇਸ਼ਨ ਵੇਖੋ',features:'KisanSlot ਕੀ ਕਰਦਾ ਹੈ',f:['ਲਾਈਵ ਡਿਜ਼ਿਟਲ ਟੋਕਨ','ਸਮਾਰਟ ਆਗਮਨ ਸਮਾਂ','ਲਾਈਵ ਮੰਡੀ ਕਤਾਰ','ਕੇਂਦਰ ਸਥਿਤੀ ਅਤੇ ਦੇਰੀ','ਖਰੀਦ ਯਾਤਰਾ','ਨੇੜਲੇ ਕੇਂਦਰ ਦੀ ਸਿਫ਼ਾਰਸ਼'],d:['ਆਪਣਾ ਟੋਕਨ ਅਤੇ ਅੱਗੇ ਕਿਸਾਨਾਂ ਦੀ ਗਿਣਤੀ ਵੇਖੋ।','ਲਾਈਵ ਕਤਾਰ ਅਨੁਸਾਰ ਸਹੀ ਪਹੁੰਚ ਸਮਾਂ ਲਵੋ।','ਹੁਣ ਕਿਹੜਾ ਟੋਕਨ ਚੱਲ ਰਿਹਾ ਹੈ ਅਤੇ ਉਡੀਕ ਸਮਾਂ ਵੇਖੋ।','ਕੇਂਦਰ ਚਾਲੂ, ਭੀੜ ਵਾਲਾ ਜਾਂ ਰੁਕਿਆ ਹੈ—ਜਾਣੋ।','ਸਲੌਟ ਤੋਂ ਤੋਲ ਅਤੇ ਭੁਗਤਾਨ ਸ਼ੁਰੂ ਹੋਣ ਤੱਕ ਟ੍ਰੈਕ ਕਰੋ।','ਘੱਟ ਭੀੜ ਵਾਲੇ ਯੋਗ ਨੇੜਲੇ ਕੇਂਦਰ ਦੀ ਤੁਲਨਾ ਕਰੋ।'],how:'ਇੱਕ ਸੌਖੀ ਪ੍ਰਕਿਰਿਆ',steps:['ਸਲੌਟ ਬੁੱਕ ਕਰੋ','ਕਤਾਰ ਟ੍ਰੈਕ ਕਰੋ','ਸਮੇਂ ਤੇ ਪਹੁੰਚੋ','ਖਰੀਦ ਪੂਰੀ ਕਰੋ'],footer:'ਕਿਸਾਨ-ਪਹਿਲਾਂ ਖਰੀਦ ਓਪਰੇਸ਼ਨ ਪ੍ਰੋਟੋਟਾਈਪ.'},
+  bn:{login:'কৃষক লগইন',join:'এখন যোগ দিন',change:'ভাষা পরিবর্তন',hero:'নির্ধারিত ক্রয় থেকে পূর্বানুমানযোগ্য ও নির্ভরযোগ্য ক্রয়ে',sub:'স্লট বুক করুন, লাইভ সারি দেখুন, বিলম্বের সতর্কতা পান এবং আপনার পালা কাছে এলে কেন্দ্রে পৌঁছান।',explore:'লাইভ অপারেশন দেখুন',features:'KisanSlot কী করে',f:['লাইভ ডিজিটাল টোকেন','স্মার্ট আগমন সময়','লাইভ মান্ডি সারি','কেন্দ্র অবস্থা ও বিলম্ব','ক্রয় যাত্রা','নিকটবর্তী কেন্দ্র পরামর্শ'],d:['নিজের টোকেন ও সামনে কত কৃষক আছেন দেখুন।','লাইভ সারি অনুযায়ী সঠিক পৌঁছানোর সময় পান।','বর্তমান টোকেন ও অপেক্ষার সময় দেখুন।','কেন্দ্র চালু, ভিড়পূর্ণ বা বন্ধ—জানুন।','স্লট থেকে ওজন ও পেমেন্ট শুরু পর্যন্ত ট্র্যাক করুন।','কম ভিড়ের যোগ্য কাছের কেন্দ্র তুলনা করুন।'],how:'একটি সহজ প্রক্রিয়া',steps:['স্লট বুক','সারি ট্র্যাক','সময়ে পৌঁছান','ক্রয় সম্পূর্ণ'],footer:'কৃষক-কেন্দ্রিক ক্রয় অপারেশন প্রোটোটাইপ.'},
+  ta:{login:'விவசாயி உள்நுழைவு',join:'இப்போது சேருங்கள்',change:'மொழி மாற்று',hero:'திட்டமிட்ட கொள்முதல் முதல் கணிக்கக்கூடிய கொள்முதல் வரை',sub:'ஸ்லாட் பதிவு செய்து, நேரடி வரிசையைப் பார்த்து, தாமத எச்சரிக்கை பெற்று, உங்கள் முறை நெருங்கும்போது மட்டும் மையத்துக்கு வாருங்கள்.',explore:'நேரடி செயல்பாடுகளைப் பாருங்கள்',features:'KisanSlot என்ன செய்கிறது',f:['நேரடி டிஜிட்டல் டோக்கன்','ஸ்மார்ட் வருகை நேரம்','நேரடி மண்டி வரிசை','மைய நிலை மற்றும் தாமதம்','கொள்முதல் பயணம்','அருகிலுள்ள மைய பரிந்துரை'],d:['உங்கள் டோக்கன் மற்றும் முன்னால் உள்ள விவசாயிகளைப் பாருங்கள்.','நேரடி வரிசையின் அடிப்படையில் சரியான வருகை நேரம் பெறுங்கள்.','தற்போதைய டோக்கன் மற்றும் காத்திருப்பு நேரம் பாருங்கள்.','மையம் இயங்குகிறதா, நெரிசலா அல்லது இடைநிறுத்தமா என்பதை அறியுங்கள்.','ஸ்லாட் முதல் எடை மற்றும் பணம் தொடக்கம் வரை கண்காணிக்கவும்.','குறைந்த நெரிசலுள்ள தகுதியான மையத்தை ஒப்பிடுங்கள்.'],how:'ஒரு எளிய பயணம்',steps:['ஸ்லாட் பதிவு','வரிசை கண்காணிப்பு','சரியான நேரத்தில் வருகை','கொள்முதல் நிறைவு'],footer:'விவசாயி-முன்னுரிமை கொள்முதல் செயல்பாட்டு மாதிரி.'},
+  te:{login:'రైతు లాగిన్',join:'ఇప్పుడే చేరండి',change:'భాష మార్చండి',hero:'షెడ్యూల్ చేసిన కొనుగోలు నుండి అంచనా వేయగల కొనుగోలుకు',sub:'స్లాట్ బుక్ చేయండి, లైవ్ క్యూ చూడండి, ఆలస్య హెచ్చరికలు పొందండి, మీ వంతు దగ్గరపడినప్పుడు మాత్రమే కేంద్రానికి రండి.',explore:'లైవ్ ఆపరేషన్స్ చూడండి',features:'KisanSlot ఏమి చేస్తుంది',f:['లైవ్ డిజిటల్ టోకెన్','స్మార్ట్ రాక సమయం','లైవ్ మార్కెట్ క్యూ','కేంద్ర స్థితి మరియు ఆలస్యాలు','కొనుగోలు ప్రయాణం','సమీప కేంద్ర సూచన'],d:['మీ టోకెన్ మరియు ముందున్న రైతుల సంఖ్య చూడండి.','లైవ్ క్యూ ఆధారంగా సరైన రాక సమయం పొందండి.','ప్రస్తుతం సేవలో ఉన్న టోకెన్, వేచి సమయం చూడండి.','కేంద్రం పనిచేస్తుందా, రద్దీగా ఉందా లేదా నిలిచిందా తెలుసుకోండి.','స్లాట్ నుండి తూకం మరియు చెల్లింపు ప్రారంభం వరకు ట్రాక్ చేయండి.','తక్కువ రద్దీ ఉన్న అర్హత కేంద్రాన్ని పోల్చండి.'],how:'ఒక సులభమైన ప్రయాణం',steps:['స్లాట్ బుక్','క్యూ ట్రాక్','సమయానికి రండి','కొనుగోలు పూర్తి'],footer:'రైతు-మొదటి కొనుగోలు ఆపరేషన్స్ ప్రోటోటైప్.'},
+  kn:{login:'ರೈತ ಲಾಗಿನ್',join:'ಈಗ ಸೇರಿ',change:'ಭಾಷೆ ಬದಲಿಸಿ',hero:'ನಿಗದಿತ ಖರೀದಿಯಿಂದ ಊಹಿಸಬಹುದಾದ ಖರೀದಿವರೆಗೆ',sub:'ಸ್ಲಾಟ್ ಬುಕ್ ಮಾಡಿ, ಲೈವ್ ಸರದಿ ನೋಡಿ, ವಿಳಂಬ ಎಚ್ಚರಿಕೆ ಪಡೆಯಿರಿ ಮತ್ತು ನಿಮ್ಮ ಸರದಿ ಹತ್ತಿರವಾದಾಗ ಮಾತ್ರ ಕೇಂದ್ರಕ್ಕೆ ಬನ್ನಿ.',explore:'ಲೈವ್ ಕಾರ್ಯಾಚರಣೆ ನೋಡಿ',features:'KisanSlot ಏನು ಮಾಡುತ್ತದೆ',f:['ಲೈವ್ ಡಿಜಿಟಲ್ ಟೋಕನ್','ಸ್ಮಾರ್ಟ್ ಆಗಮನ ಸಮಯ','ಲೈವ್ ಮಾರುಕಟ್ಟೆ ಸರದಿ','ಕೇಂದ್ರ ಸ್ಥಿತಿ ಮತ್ತು ವಿಳಂಬ','ಖರೀದಿ ಪ್ರಯಾಣ','ಹತ್ತಿರದ ಕೇಂದ್ರ ಸಲಹೆ'],d:['ನಿಮ್ಮ ಟೋಕನ್ ಮತ್ತು ಮುಂದೆ ಇರುವ ರೈತರ ಸಂಖ್ಯೆ ನೋಡಿ.','ಲೈವ್ ಸರದಿಯ ಆಧಾರದ ಮೇಲೆ ಸರಿಯಾದ ಆಗಮನ ಸಮಯ ಪಡೆಯಿರಿ.','ಪ್ರಸ್ತುತ ಟೋಕನ್ ಮತ್ತು ನಿರೀಕ್ಷೆ ಸಮಯ ನೋಡಿ.','ಕೇಂದ್ರ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆಯೇ, ದಟ್ಟಣೆ ಇದೆಯೇ ಅಥವಾ ನಿಂತಿದೆಯೇ ತಿಳಿಯಿರಿ.','ಸ್ಲಾಟ್‌ನಿಂದ ತೂಕ ಮತ್ತು ಪಾವತಿ ಆರಂಭದವರೆಗೆ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.','ಕಡಿಮೆ ದಟ್ಟಣೆಯ ಅರ್ಹ ಕೇಂದ್ರ ಹೋಲಿಸಿ.'],how:'ಒಂದು ಸರಳ ಪ್ರಯಾಣ',steps:['ಸ್ಲಾಟ್ ಬುಕ್','ಸರದಿ ಟ್ರ್ಯಾಕ್','ಸಮಯಕ್ಕೆ ಬನ್ನಿ','ಖರೀದಿ ಪೂರ್ಣ'],footer:'ರೈತ-ಪ್ರಥಮ ಖರೀದಿ ಕಾರ್ಯಾಚರಣೆ ಮಾದರಿ.'},
+  ml:{login:'കർഷക ലോഗിൻ',join:'ഇപ്പോൾ ചേരുക',change:'ഭാഷ മാറ്റുക',hero:'നിശ്ചിത വാങ്ങലിൽ നിന്ന് പ്രവചിക്കാവുന്ന വാങ്ങലിലേക്ക്',sub:'സ്ലോട്ട് ബുക്ക് ചെയ്യുക, ലൈവ് ക്യൂ കാണുക, വൈകൽ അറിയിപ്പുകൾ നേടുക, നിങ്ങളുടെ സമയം അടുത്തപ്പോൾ മാത്രം കേന്ദ്രത്തിലെത്തുക.',explore:'ലൈവ് ഓപ്പറേഷൻസ് കാണുക',features:'KisanSlot എന്ത് ചെയ്യുന്നു',f:['ലൈവ് ഡിജിറ്റൽ ടോക്കൺ','സ്മാർട്ട് വരവ് സമയം','ലൈവ് മണ്ടി ക്യൂ','കേന്ദ്ര നിലയും വൈകലും','വാങ്ങൽ യാത്ര','സമീപ കേന്ദ്ര നിർദേശം'],d:['നിങ്ങളുടെ ടോക്കനും മുന്നിലുള്ള കർഷകരുടെ എണ്ണവും കാണുക.','ലൈവ് ക്യൂ അടിസ്ഥാനമാക്കി ശരിയായ വരവ് സമയം നേടുക.','നിലവിലെ ടോക്കനും കാത്തിരിപ്പ് സമയവും കാണുക.','കേന്ദ്രം പ്രവർത്തിക്കുന്നുണ്ടോ, തിരക്കാണോ, നിർത്തിയിട്ടുണ്ടോ അറിയുക.','സ്ലോട്ടിൽ നിന്ന് തൂക്കവും പേയ്മെന്റും വരെ ട്രാക്ക് ചെയ്യുക.','കുറഞ്ഞ തിരക്കുള്ള യോഗ്യ കേന്ദ്രം താരതമ്യം ചെയ്യുക.'],how:'ഒരു ലളിത യാത്ര',steps:['സ്ലോട്ട് ബുക്ക്','ക്യൂ ട്രാക്ക്','സമയത്ത് എത്തുക','വാങ്ങൽ പൂർത്തിയാക്കുക'],footer:'കർഷക-പ്രഥമ വാങ്ങൽ ഓപ്പറേഷൻസ് പ്രോട്ടോടൈപ്പ്.'},
+  or:{login:'କୃଷକ ଲଗଇନ୍',join:'ଏବେ ଯୋଗଦିଅନ୍ତୁ',change:'ଭାଷା ବଦଳାନ୍ତୁ',hero:'ନିର୍ଦ୍ଧାରିତ କ୍ରୟରୁ ଅନୁମାନଯୋଗ୍ୟ କ୍ରୟ ପର୍ଯ୍ୟନ୍ତ',sub:'ସ୍ଲଟ୍ ବୁକ୍ କରନ୍ତୁ, ଲାଇଭ୍ କ୍ୟୁ ଦେଖନ୍ତୁ, ବିଳମ୍ବ ସୂଚନା ପାଆନ୍ତୁ ଏବଂ ଆପଣଙ୍କ ପାଳି ନିକଟ ହେଲେ କେନ୍ଦ୍ରକୁ ଯାଆନ୍ତୁ।',explore:'ଲାଇଭ୍ ଅପରେସନ୍ ଦେଖନ୍ତୁ',features:'KisanSlot କଣ କରେ',f:['ଲାଇଭ୍ ଡିଜିଟାଲ୍ ଟୋକନ୍','ସ୍ମାର୍ଟ ଆଗମନ ସମୟ','ଲାଇଭ୍ ମଣ୍ଡି କ୍ୟୁ','କେନ୍ଦ୍ର ସ୍ଥିତି ଓ ବିଳମ୍ବ','କ୍ରୟ ଯାତ୍ରା','ନିକଟ କେନ୍ଦ୍ର ସୁପାରିଶ'],d:['ଟୋକନ୍ ଏବଂ ଆଗରେ କେତେ କୃଷକ ଅଛନ୍ତି ଦେଖନ୍ତୁ।','ଲାଇଭ୍ କ୍ୟୁ ଆଧାରରେ ଠିକ୍ ଆଗମନ ସମୟ ପାଆନ୍ତୁ।','ଚାଲୁ ଟୋକନ୍ ଓ ଅପେକ୍ଷା ସମୟ ଦେଖନ୍ତୁ।','କେନ୍ଦ୍ର ଚାଲୁ, ଭିଡ଼ କିମ୍ବା ବନ୍ଦ ଅଛି କି ଜାଣନ୍ତୁ।','ସ୍ଲଟ୍ ଠାରୁ ଓଜନ ଓ ପେମେଣ୍ଟ ପର୍ଯ୍ୟନ୍ତ ଟ୍ରାକ୍ କରନ୍ତୁ।','କମ୍ ଭିଡ଼ ଥିବା ଯୋଗ୍ୟ କେନ୍ଦ୍ର ତୁଳନା କରନ୍ତୁ।'],how:'ଏକ ସରଳ ପ୍ରକ୍ରିୟା',steps:['ସ୍ଲଟ୍ ବୁକ୍','କ୍ୟୁ ଟ୍ରାକ୍','ସମୟରେ ପହଞ୍ଚନ୍ତୁ','କ୍ରୟ ସମ୍ପୂର୍ଣ୍ଣ'],footer:'କୃଷକ-ପ୍ରଥମ କ୍ରୟ ଅପରେସନ୍ ପ୍ରୋଟୋଟାଇପ୍.'},
+  as:{login:'কৃষক লগইন',join:'এতিয়াই যোগ দিয়ক',change:'ভাষা সলনি কৰক',hero:'নিৰ্ধাৰিত ক্ৰয়ৰ পৰা অনুমানযোগ্য ক্ৰয়লৈ',sub:'স্লট বুক কৰক, লাইভ শাৰী চাওক, পলমৰ সতৰ্কতা পাওক আৰু আপোনাৰ পাল ওচৰ হ’লে কেন্দ্ৰলৈ আহক।',explore:'লাইভ অপাৰেচন চাওক',features:'KisanSlot কি কৰে',f:['লাইভ ডিজিটেল টোকেন','স্মাৰ্ট আগমনৰ সময়','লাইভ মণ্ডী শাৰী','কেন্দ্ৰৰ অৱস্থা আৰু পলম','ক্ৰয় যাত্ৰা','ওচৰৰ কেন্দ্ৰ পৰামৰ্শ'],d:['টোকেন আৰু আগত থকা কৃষকৰ সংখ্যা চাওক।','লাইভ শাৰীৰ ভিত্তিত সঠিক আগমনৰ সময় পাওক।','বৰ্তমান টোকেন আৰু অপেক্ষাৰ সময় চাওক।','কেন্দ্ৰ চলি আছে, ভিৰ হৈছে নে বন্ধ আছে জানক।','স্লটৰ পৰা ওজন আৰু পেমেণ্টলৈ ট্ৰেক কৰক।','কম ভিৰৰ যোগ্য ওচৰৰ কেন্দ্ৰ তুলনা কৰক।'],how:'এটা সহজ যাত্ৰা',steps:['স্লট বুক','শাৰী ট্ৰেক','সময়ত আহক','ক্ৰয় সম্পূৰ্ণ'],footer:'কৃষক-প্ৰথম ক্ৰয় অপাৰেচন প্ৰোটোটাইপ.'},
+  ur:{login:'کسان لاگ اِن',join:'ابھی شامل ہوں',change:'زبان بدلیں',hero:'مقررہ خرید سے قابلِ پیش گوئی خرید تک',sub:'سلاٹ بک کریں، لائیو قطار دیکھیں، تاخیر کی اطلاع پائیں اور اپنی باری قریب ہونے پر مرکز پہنچیں۔',explore:'لائیو آپریشن دیکھیں',features:'KisanSlot کیا کرتا ہے',f:['لائیو ڈیجیٹل ٹوکن','اسمارٹ آمد کا وقت','لائیو منڈی قطار','مرکز کی حالت اور تاخیر','خریداری کا سفر','قریبی مرکز کی تجویز'],d:['اپنا ٹوکن اور آگے کسانوں کی تعداد دیکھیں۔','لائیو قطار کے مطابق درست آمد کا وقت پائیں۔','موجودہ ٹوکن اور انتظار کا وقت دیکھیں۔','مرکز چل رہا ہے، مصروف ہے یا بند—جانیں۔','سلاٹ سے وزن اور ادائیگی تک ٹریک کریں۔','کم ہجوم والے اہل قریبی مرکز کا موازنہ کریں۔'],how:'ایک آسان سفر',steps:['سلاٹ بک کریں','قطار ٹریک کریں','وقت پر پہنچیں','خرید مکمل کریں'],footer:'کسان-مرکوز خریداری آپریشن پروٹوٹائپ.'},
+  ne:{login:'किसान लगइन',join:'अहिले जोडिनुहोस्',change:'भाषा बदल्नुहोस्',hero:'निर्धारित खरिदबाट अनुमान गर्न सकिने खरिदसम्म',sub:'स्लट बुक गर्नुहोस्, लाइभ लाइन हेर्नुहोस्, ढिलाइ सूचना पाउनुहोस् र आफ्नो पालो नजिकिँदा मात्र केन्द्र पुग्नुहोस्।',explore:'लाइभ अपरेसन हेर्नुहोस्',features:'KisanSlot ले के गर्छ',f:['लाइभ डिजिटल टोकन','स्मार्ट आगमन समय','लाइभ मण्डी लाइन','केन्द्र अवस्था र ढिलाइ','खरिद यात्रा','नजिकको केन्द्र सुझाव'],d:['आफ्नो टोकन र अगाडि कति किसान छन् हेर्नुहोस्।','लाइभ लाइनका आधारमा सही आगमन समय पाउनुहोस्।','हालको टोकन र प्रतीक्षा समय हेर्नुहोस्।','केन्द्र सञ्चालनमा, भीडभाड वा रोकिएको छ कि जान्नुहोस्।','स्लटदेखि तौल र भुक्तानी सुरु हुँदासम्म ट्र्याक गर्नुहोस्।','कम भीड भएको योग्य नजिकको केन्द्र तुलना गर्नुहोस्।'],how:'एक सरल यात्रा',steps:['स्लट बुक','लाइन ट्र्याक','समयमा पुग्नुहोस्','खरिद पूरा'],footer:'किसान-प्रथम खरिद अपरेसन प्रोटोटाइप.'}
 };
+
+// Languages with closely related scripts currently use a localized Hindi-family landing copy, while all app screens retain their own native portal translations.
+['sa','kok','doi'].forEach(k => T[k] = T.hi);
+T.ks = T.ur; T.sd = T.ur; T.mni = T.bn;
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
-  const t = translations[language] || translations.en;
+  const t = T[language] || T.en;
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const currentLang = LANGS.find(([c]) => c === language)?.[1] || 'English';
+  const rtl = ['ur','ks','sd'].includes(language);
 
-  return (
-    <div className="landing-page-wrapper">
-      <nav className="main-nav">
-        <div className="nav-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-          <img src="/logo.png" alt="Logo" className="logo-img" />
-          <span className="logo-text">KisanSlot</span>
+  return <div className="landing-page-wrapper" dir={rtl ? 'rtl' : 'ltr'}>
+    <nav className="main-nav">
+      <div className="nav-logo"><img src="/logo.png" alt="KisanSlot" className="logo-img"/><span className="logo-text">KisanSlot</span></div>
+      <div className="nav-buttons">
+        <div className="lang-dropdown">
+          <button className="nav-btn lang-toggle" onClick={()=>setShowLangMenu(v=>!v)}>🌐 {currentLang}</button>
+          {showLangMenu && <div className="lang-menu">{LANGS.map(([code,name])=><div key={code} className="lang-option" onClick={()=>{setLanguage(code);setShowLangMenu(false)}}>{name}</div>)}</div>}
         </div>
-        <div className="nav-buttons">
-          <div className="lang-dropdown">
-            <button className="nav-btn lang-toggle" onClick={() => setShowLangMenu(!showLangMenu)}>
-              🌐 {t.changeLang}
-            </button>
-            {showLangMenu && (
-              <div className="lang-menu">
-                {Object.keys(translations).map(lang => (
-                  <div key={lang} className="lang-option" onClick={() => { setLanguage(lang); setShowLangMenu(false); }}>
-                    {lang === 'en' ? 'English' : lang === 'hi' ? 'हिंदी' : lang}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <button className="nav-btn login" onClick={() => navigate('/login')}>{t.login}</button>
-          <button className="nav-btn signup" onClick={() => navigate('/signup')}>{t.signup}</button>
-        </div>
-      </nav>
+        <button className="nav-btn login" onClick={()=>navigate('/login')}>{t.login}</button>
+        <button className="nav-btn signup" onClick={()=>navigate('/signup')}>{t.join}</button>
+      </div>
+    </nav>
 
-      <section 
-        className="hero-section" 
-        style={{ backgroundImage: "url('/banner.jpg')" }}
-      >
-        <div className="hero-overlay">
-          <h1 className="hero-title">Empowering the Annadata</h1>
-          <p className="hero-subtitle">{t.tagline}</p>
-          <div className="hero-buttons">
-            <button className="btn-hero-signup" onClick={() => navigate('/signup')}>{t.signup}</button>
-            <button className="btn-hero-login" onClick={() => navigate('/login')}>{t.login}</button>
-          </div>
+    <section className="hero-section landing-hero-compact" style={{backgroundImage:"url('/banner.jpg')"}}>
+      <div className="hero-overlay">
+        <div className="hero-kicker">KisanSlot</div>
+        <h1 className="hero-title">{t.hero}</h1>
+        <p className="hero-subtitle">{t.sub}</p>
+        <div className="hero-buttons">
+          <button className="btn-hero-signup" onClick={()=>navigate('/operations')}>{t.explore}</button>
+          <button className="btn-hero-login" onClick={()=>navigate('/login')}>{t.login}</button>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section className="impact-section">
-        <h2 className="section-title">Our National Impact</h2>
-        <div className="impact-grid">
-          <div className="impact-card">
-            <span className="impact-num">2.5L+</span>
-            <span className="impact-label">{t.farmers}</span>
-          </div>
-          <div className="impact-card">
-            <span className="impact-num">12.5M</span>
-            <span className="impact-label">{t.hours}</span>
-          </div>
-          <div className="impact-card">
-            <span className="impact-num">₹125Cr</span>
-            <span className="impact-label">{t.income}</span>
-          </div>
-        </div>
-      </section>
+    <section className="features-section landing-feature-first">
+      <h2 className="section-title">{t.features}</h2>
+      <div className="features-grid">
+        {t.f.map((name,i)=><div className="feature-item-floating" key={name}>
+          <div className="f-icon-circle">{['🎫','⏱️','📍','🚦','✅','🔀'][i]}</div>
+          <h3>{name}</h3><p className="feature-desc">{t.d[i]}</p>
+        </div>)}
+      </div>
+    </section>
 
-      <section className="problem-section">
-        <h2 className="section-title">{t.problemTitle}</h2>
-        <div className="comparison-container">
-          <div className="comp-card old">
-            <h3 className="card-h3">The Old Way ❌</h3>
-            <p>Wake up at 4 AM ➔ Chaotic queues ➔ Wait 4 hours ➔ Processed in 20 mins</p>
-            <p className="loss-tag">Loss: ₹500/trip</p>
-          </div>
-          <div className="comp-arrow">➔</div>
-          <div className="comp-card new">
-            <h3 className="card-h3">The KisanSlot Way ✅</h3>
-            <p>Book on app ➔ Arrive at exact time ➔ Processed in 20 mins</p>
-            <p className="gain-tag">Gain: Time & Peace</p>
-          </div>
-        </div>
-        <p className="problem-desc">{t.problemDesc}</p>
-      </section>
+    <section className="journey-strip">
+      <h2 className="section-title">{t.how}</h2>
+      <div className="journey-steps">{t.steps.map((s,i)=><div className="journey-step" key={s}><span>{i+1}</span><b>{s}</b></div>)}</div>
+    </section>
 
-      <section className="features-section">
-        <h2 className="section-title">{t.featureTitle}</h2>
-        <div className="features-grid">
-          {[t.feature1, t.feature2, t.feature3, t.feature4, t.feature5, t.feature6].map((f, i) => (
-            <div key={i} className="feature-item-floating">
-              <div className="f-icon-circle">
-                <span className="f-icon">{['⚡','📱','💰','🌾','📉','🏦'][i]}</span>
-              </div>
-              <p>{f}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+    <section className="landing-demo-cta">
+      <div><h2>{t.hero}</h2><p>{t.sub}</p></div>
+      <button onClick={()=>navigate('/operations')}>{t.explore} →</button>
+    </section>
 
-      <section className="about-section">
-        <div className="about-content">
-          <h2 className="section-title">{t.aboutTitle}</h2>
-          <div className="vision-grid">
-            <div className="vision-card">
-              <div className="v-icon">🎯</div><h4 className="v-title">Our Mission</h4><p>To eliminate the chaos of traditional procurement and restore dignity and time.</p>
-            </div>
-            <div className="vision-card">
-              <div className="v-icon">⚙️</div><h4 className="v-title">Our Method</h4><p>A scalable cloud-system accessible via SMS and Web portals.</p>
-            </div>
-            <div className="vision-card">
-              <div className="v-icon">🚀</div><h4 className="v-title">Our Vision</h4><p>A digital India where procurement is a right, not a struggle.</p>
-            </div>
-          </div>
-          <p className="about-footer">{t.aboutDesc}</p>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <p>&copy; 2026 KisanSlot. A Government of India Initiative.</p>
-      </footer>
-    </div>
-  );
+    <footer className="footer"><p>© 2026 KisanSlot · {t.footer}</p></footer>
+  </div>;
 }
