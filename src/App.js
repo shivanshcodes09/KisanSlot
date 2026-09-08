@@ -18,8 +18,8 @@ import LoadingScreen from './components/LoadingScreen';
 
 export default function App() {
   const [hasChosenLanguage, setHasChosenLanguage] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // demo mode for hackathon
-  const [userData, setUserData] = useState({ name: 'Farmer User', farmerId: 'K-12345', village: 'Haryana' });
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userData, setUserData] = useState({ name: '', farmerId: 'K-12345', village: 'Haryana' });
   const [isLoading, setIsLoading] = useState(true);
 
   React.useEffect(() => {
