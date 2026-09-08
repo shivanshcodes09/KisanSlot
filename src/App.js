@@ -13,7 +13,7 @@ import Bookings from './pages/Bookings';
 import Payments from './pages/Payments';
 import MSP from './pages/MSP';
 import News from './pages/News';
-import Operations from './pages/Operations';
+import Operations from './pages/OperationsMultilingual';
 import LoadingScreen from './components/LoadingScreen';
 
 export default function App() {
