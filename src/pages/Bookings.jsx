@@ -1,137 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { getAppText, isRtl } from '../i18n/appText';
 import '../styles/Bookings.css';
 
 export default function Bookings({ userData }) {
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const [filter, setFilter] = useState('all');
-
-  const t = {
-    en: { 
-      title: 'My Procurement Schedule', 
-      back: 'Back to Dashboard', 
-      date: 'Date', 
-      center: 'Center', 
-      time: 'Time', 
-      status: 'Status', 
-      all: 'All', 
-      upcoming: 'Upcoming', 
-      past: 'Past',
-      myBookings: 'My Bookings',
-      myPayments: 'Payment History',
-      myProfile: 'My Profile',
-      news: 'News & Updates',
-      rates: 'Market Rates',
-      langBtn: '🌐 Language'
-    },
-    hi: { 
-      title: 'मेरी बुकिंग अनुसूची', 
-      back: 'डैशबोर्ड पर वापस जाएं', 
-      date: 'तारीख', 
-      center: 'केंद्र', 
-      time: 'समय', 
-      status: 'स्थिति', 
-      all: 'सभी', 
-      upcoming: 'आगामी', 
-      past: 'बीत चुके',
-      myBookings: 'मेरी बुकिंग',
-      myPayments: 'भुगतान इतिहास',
-      myProfile: 'मेरी प्रोफाइल',
-      news: 'समाचार और अपडेट',
-      rates: 'बाजार दरें',
-      langBtn: '🌐 भाषा'
-    },
-  }[language] || { title: 'My Bookings', back: 'Back to Dashboard', date: 'Date', center: 'Center', time: 'Time', status: 'Status', all: 'All', upcoming: 'Upcoming', past: 'Past', myBookings: 'My Bookings', myPayments: 'Payment History', myProfile: 'My Profile', news: 'News & Updates', rates: 'Market Rates', langBtn: '🌐 Language' };
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'hi' : 'en');
-  };
+  const t = getAppText(language);
+  const chooseLanguage = () => { localStorage.removeItem('kisanslot-language'); window.location.reload(); };
 
   const bookings = [
-    { id: 'BKN-101', date: 'Sept 12, 2026', time: '10:00 AM', center: 'Haryana Regional Center', status: 'Upcoming', statusClass: 'upcoming' },
-    { id: 'BKN-098', date: 'Sept 5, 2026', time: '08:30 AM', center: 'Gurugram Hub', status: 'Completed', statusClass: 'completed' },
-    { id: 'BKN-082', date: 'Aug 20, 2026', time: '11:00 AM', center: 'Rohtak Center', status: 'Completed', statusClass: 'completed' },
+    { id:'BKN-101', date:'12/09/2026', time:'10:00', center:'Haryana Regional Center', status:'upcoming' },
+    { id:'BKN-098', date:'05/09/2026', time:'08:30', center:'Gurugram Hub', status:'completed' },
+    { id:'BKN-082', date:'20/08/2026', time:'11:00', center:'Rohtak Center', status:'completed' },
   ];
+  const filtered = bookings.filter(b => filter === 'all' || (filter === 'upcoming' ? b.status === 'upcoming' : b.status === 'completed'));
 
-  const filteredBookings = bookings.filter(b => {
-    if (filter === 'upcoming') return b.status === 'Upcoming';
-    if (filter === 'past') return b.status === 'Completed';
-    return true;
-  });
-
-  return (
-    <div className="dashboard-layout">
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <img src="/logo.png" alt="Logo" />
-          <span>KisanSlot</span>
-        </div>
-        <nav className="sidebar-nav">
-          <button className="nav-item" onClick={() => navigate('/dashboard')}>🏠 Dashboard</button>
-          <button className="nav-item active" onClick={() => navigate('/bookings')}>📋 {t.myBookings}</button>
-          <button className="nav-item" onClick={() => navigate('/payments')}>💳 {t.myPayments}</button>
-          <button className="nav-item" onClick={() => navigate('/news')}>📰 {t.news}</button>
-          <button className="nav-item" onClick={() => navigate('/msp')}>📈 {t.rates}</button>
-          <button className="nav-item" onClick={() => navigate('/profile')}>👤 {t.myProfile}</button>
-        </nav>
-        <div className="sidebar-footer">
-          <button className="lang-switch-btn" onClick={toggleLanguage}>
-            {t.langBtn} {language === 'en' ? '➔ HI' : '➔ EN'}
-          </button>
-          <button className="logout-btn" onClick={() => window.location.href = '/'}>Logout ➔</button>
-        </div>
-      </aside>
-
-      <main className="main-content">
-        <header className="top-bar">
-          <button className="nav-back-btn" onClick={() => navigate('/dashboard')}>← {t.back}</button>
-          <div className="user-pill">
-            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" alt="User" />
-            <span>Farmer User</span>
-          </div>
-        </header>
-
-        <div className="bookings-central-container">
-          <h1 className="page-title">{t.title}</h1>
-          
-          <div className="filter-tabs">
-            <button className={`tab-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>{t.all}</button>
-            <button className={`tab-btn ${filter === 'upcoming' ? 'active' : ''}`} onClick={() => setFilter('upcoming')}>{t.upcoming}</button>
-            <button className={`tab-btn ${filter === 'past' ? 'active' : ''}`} onClick={() => setFilter('past')}>{t.past}</button>
-          </div>
-
-          <div className="bookings-table-wrapper">
-            <table className="bookings-table">
-              <thead>
-                <tr>
-                  <th>{t.date}</th>
-                  <th>{t.center}</th>
-                  <th>{t.time}</th>
-                  <th>{t.status}</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBookings.map(b => (
-                  <tr key={b.id}>
-                    <td>{b.date}</td>
-                    <td>{b.center}</td>
-                    <td>{b.time}</td>
-                    <td><span className={`status-badge ${b.statusClass}`}>{b.status}</span></td>
-                    <td>
-                      <button className="btn-details" onClick={() => navigate(`/bookings/${b.id}`)}>
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  return <div className="dashboard-layout" dir={isRtl(language) ? 'rtl' : 'ltr'}>
+    <aside className="sidebar">
+      <div className="sidebar-logo"><img src="/logo.png" alt=""/><span>KisanSlot</span></div>
+      <nav className="sidebar-nav">
+        <button className="nav-item" onClick={()=>navigate('/dashboard')}>🏠 {t.common.dashboard}</button>
+        <button className="nav-item active" onClick={()=>navigate('/bookings')}>📋 {t.common.bookings}</button>
+        <button className="nav-item" onClick={()=>navigate('/payments')}>💳 {t.common.payments}</button>
+        <button className="nav-item" onClick={()=>navigate('/news')}>📰 {t.common.news}</button>
+        <button className="nav-item" onClick={()=>navigate('/msp')}>📈 {t.common.rates}</button>
+        <button className="nav-item" onClick={()=>navigate('/profile')}>👤 {t.common.profile}</button>
+      </nav>
+      <div className="sidebar-footer"><button className="lang-switch-btn" onClick={chooseLanguage}>🌐 {t.common.changeLanguage}</button><button className="logout-btn" onClick={()=>window.location.href='/'}>{t.common.logout} ➔</button></div>
+    </aside>
+    <main className="main-content">
+      <header className="top-bar"><button className="nav-back-btn" onClick={()=>navigate('/dashboard')}>← {t.common.back}</button><div className="user-pill"><img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" alt=""/><span>{userData?.name || t.common.farmerUser}</span></div></header>
+      <div className="bookings-central-container">
+        <h1 className="page-title">{t.bookings.title}</h1>
+        <div className="filter-tabs"><button className={`tab-btn ${filter==='all'?'active':''}`} onClick={()=>setFilter('all')}>{t.bookings.all}</button><button className={`tab-btn ${filter==='upcoming'?'active':''}`} onClick={()=>setFilter('upcoming')}>{t.common.upcoming}</button><button className={`tab-btn ${filter==='past'?'active':''}`} onClick={()=>setFilter('past')}>{t.bookings.past}</button></div>
+        <div className="bookings-table-wrapper"><table className="bookings-table"><thead><tr><th>{t.common.date}</th><th>{t.common.center}</th><th>{t.common.time}</th><th>{t.common.status}</th><th>{t.common.action}</th></tr></thead><tbody>{filtered.map(b=><tr key={b.id}><td>{b.date}</td><td>{b.center}</td><td>{b.time}</td><td><span className={`status-badge ${b.status}`}>{b.status==='upcoming'?t.common.upcoming:t.common.completed}</span></td><td><button className="btn-details" onClick={()=>navigate(`/bookings/${b.id}`)}>{t.bookings.viewDetails}</button></td></tr>)}</tbody></table></div>
+      </div>
+    </main>
+  </div>;
 }
